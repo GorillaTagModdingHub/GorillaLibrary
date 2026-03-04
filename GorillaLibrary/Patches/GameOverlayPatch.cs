@@ -1,4 +1,4 @@
-﻿using GorillaLibrary.Events;
+﻿using static GorillaLibrary.Events.PlayerEvents;
 
 namespace GorillaLibrary.Patches
 {
@@ -6,7 +6,7 @@ namespace GorillaLibrary.Patches
     {
         public static void Postfix(GorillaTagger __instance, bool ___isGameOverlayActive)
         {
-            PlayerEvents.OnGameOverlayActivation?.InvokeSafe(___isGameOverlayActive);
+            GorillaLibrary.Instance.Bus.Publish(new GameOverlayActivationEvent(___isGameOverlayActive));
         }
     }
 }

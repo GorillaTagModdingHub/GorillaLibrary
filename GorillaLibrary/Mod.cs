@@ -10,6 +10,7 @@ using System.Reflection;
 using GorillaLibrary.Patches;
 using GorillaLibrary.Utilities;
 using static GorillaLibrary.Events.GameEvents;
+using static GorillaLibrary.Events.PlayerEvents;
 
 [assembly: MelonInfo(typeof(Mod), "GorillaLibrary", "1.0.0", "dev9998")]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
@@ -66,12 +67,12 @@ internal class Mod : GorillaMod
 
     private void OnPlayerEntered(NetPlayer netPlayer)
     {
-        PlayerEvents.OnPlayerEnteredRoom?.InvokeSafe(netPlayer);
+        Bus.Publish(new PlayerEnteredRoomEvent(netPlayer));
     }
 
     private void OnPlayerLeft(NetPlayer netPlayer)
     {
-        PlayerEvents.OnPlayerLeftRoom?.InvokeSafe(netPlayer);
+        Bus.Publish(new PlayerLeftRoomEvent(netPlayer));
     }
 
     private void OnEvent(EventData data)
@@ -85,7 +86,7 @@ internal class Mod : GorillaMod
                     if (NetworkSystem.Instance is NetworkSystem netSys && netSys.GetPlayer(data.Sender) is NetPlayer netPlayer && hashtable.TryGetValue(byte.MaxValue, out object value))
                     {
                         string nickName = value as string;
-                        PlayerEvents.OnPlayerNameChanged.InvokeSafe(netPlayer, nickName);
+                        Bus.Publish(new PlayerNameChangedEvent(netPlayer, nickName));
                     }
                     break;
             }
