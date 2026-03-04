@@ -11,6 +11,7 @@ using GorillaLibrary.Patches;
 using GorillaLibrary.Utilities;
 using static GorillaLibrary.Events.GameEvents;
 using static GorillaLibrary.Events.PlayerEvents;
+using static GorillaLibrary.Events.RoomEvents;
 
 [assembly: MelonInfo(typeof(Mod), "GorillaLibrary", "1.0.0", "dev9998")]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
@@ -57,12 +58,12 @@ internal class Mod : GorillaMod
 
     private void OnRoomJoined()
     {
-        RoomEvents.OnRoomJoined?.InvokeSafe();
+        Bus.Publish(new RoomJoinedEvent());
     }
 
     private void OnRoomLeft()
     {
-        RoomEvents.OnRoomLeft?.InvokeSafe();
+        Bus.Publish(new RoomLeftEvent());
     }
 
     private void OnPlayerEntered(NetPlayer netPlayer)
