@@ -12,6 +12,7 @@ using GorillaLibrary.Utilities;
 using static GorillaLibrary.Events.GameEvents;
 using static GorillaLibrary.Events.PlayerEvents;
 using static GorillaLibrary.Events.RoomEvents;
+using static GorillaLibrary.Events.ServerEvents;
 
 [assembly: MelonInfo(typeof(Mod), "GorillaLibrary", "1.0.0", "dev9998")]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
@@ -53,7 +54,7 @@ internal class Mod : GorillaMod
 
     private void OnMothershipMessageRecieved(NotificationsMessageResponse notification, nint _)
     {
-        ServerEvents.OnMothershipMessageRecieved?.InvokeSafe(notification.Title, notification.Body);
+        Bus.Publish(new MothershipMessageReceivedEvent(notification));
     }
 
     private void OnRoomJoined()

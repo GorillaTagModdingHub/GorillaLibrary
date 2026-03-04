@@ -1,4 +1,4 @@
-﻿using GorillaLibrary.Events;
+﻿using GorillaLibrary.Events.System;
 using MelonLoader;
 using System;
 
