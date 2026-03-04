@@ -1,4 +1,4 @@
-﻿namespace GorillaLibrary.Events
+﻿namespace GorillaLibrary.Events.System
 {
     public interface IEvent { }
     public abstract class CancellableEvent : IEvent

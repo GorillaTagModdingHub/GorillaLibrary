@@ -1,7 +1,7 @@
-﻿using GorillaLibrary.Events;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
+using static GorillaLibrary.Events.RigEvents;
 
 namespace GorillaLibrary.Patches;
 
@@ -19,7 +19,7 @@ internal class RigContainerPatches
         __instance.Rig.OnColorChanged += eventSource.OnColourUpdated;
         _dictionary.Add(__instance, eventSource);
 
-        RigEvents.OnRigAdded?.InvokeSafe(__instance.Rig, value);
+        GorillaLibrary.Instance.Bus.Publish(new RigAddedEvent(__instance.Rig, value));
     }
 
     [HarmonyPatch("OnDisable"), HarmonyPostfix]
@@ -30,7 +30,7 @@ internal class RigContainerPatches
             __instance.Rig.OnColorChanged -= eventSource.OnColourUpdated;
             _dictionary.Remove(__instance);
 
-            RigEvents.OnRigRemoved?.InvokeSafe(__instance.Rig);
+            GorillaLibrary.Instance.Bus.Publish(new RigRemovedEvent(__instance.Rig));
         }
     }
 
@@ -40,7 +40,7 @@ internal class RigContainerPatches
 
         public void OnColourUpdated(Color colour)
         {
-            RigEvents.OnColourChanged?.InvokeSafe(_rig, colour);
+            GorillaLibrary.Instance.Bus.Publish(new ColourChangedEvent(_rig, colour));
         }
     }
 }

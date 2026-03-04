@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GorillaLibrary.Events
+namespace GorillaLibrary.Events.System
 {
     public class Listener<T> where T : IEvent
     {

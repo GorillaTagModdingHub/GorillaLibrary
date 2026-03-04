@@ -1,4 +1,6 @@
-﻿namespace GorillaLibrary.Events
+﻿using GorillaLibrary.Events.System;
+
+namespace GorillaLibrary.Events
 {
     public class GameEvents
     {
