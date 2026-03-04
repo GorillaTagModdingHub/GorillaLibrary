@@ -1,6 +1,5 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaLibrary;
-using GorillaLibrary.Events;
 using MelonLoader;
 using Photon.Pun;
 using System;
@@ -10,6 +9,7 @@ using HarmonyLib;
 using System.Reflection;
 using GorillaLibrary.Patches;
 using GorillaLibrary.Utilities;
+using static GorillaLibrary.Events.GameEvents;
 
 [assembly: MelonInfo(typeof(Mod), "GorillaLibrary", "1.0.0", "dev9998")]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
@@ -46,7 +46,7 @@ internal class Mod : GorillaMod
             HarmonyInstance.Patch(method, postfix: new(AccessTools.Method(typeof(GameOverlayPatch), nameof(GameOverlayPatch.Postfix)), priority: HarmonyLib.Priority.First));
         }
 
-        Events.GameEvents.OnGameInitialized?.InvokeSafe();
+        Bus.Publish(new GameInitializedEvent());
     }
 
     private void OnMothershipMessageRecieved(NotificationsMessageResponse notification, nint _)
