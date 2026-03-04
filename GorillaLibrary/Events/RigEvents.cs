@@ -11,7 +11,8 @@ namespace GorillaLibrary.Events
             public NetPlayer Player { get; private set; } = player;
         }
 
-        public class RigRemovedEvent(VRRig rig) : IEvent {
+        public class RigRemovedEvent(VRRig rig) : IEvent
+        {
             public VRRig Rig { get; private set; } = rig;
         }
 

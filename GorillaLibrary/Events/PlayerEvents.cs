@@ -1,14 +1,12 @@
 ﻿using GorillaLibrary.Events.System;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GorillaLibrary.Events
 {
     public class PlayerEvents
     {
 
-        public class PlayerEnteredRoomEvent(NetPlayer player) : IEvent {
+        public class PlayerEnteredRoomEvent(NetPlayer player) : IEvent
+        {
             public NetPlayer Player { get; private set; } = player;
         }
 

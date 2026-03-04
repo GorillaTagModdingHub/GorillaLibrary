@@ -14,7 +14,7 @@ public abstract class InputTracker
     internal XRNode node;
     internal string name;
     internal Traverse traverse;
-    internal Action<InputTracker> OnPressed, OnReleased;
+    public Action<InputTracker> OnPressed, OnReleased;
 
     public abstract void UpdateValues();
 }

@@ -9,11 +9,14 @@ using HarmonyLib;
 using System.Reflection;
 using GorillaLibrary.Patches;
 using GorillaLibrary.Utilities;
+
+#region Events
 using static GorillaLibrary.Events.GameEvents;
 using static GorillaLibrary.Events.PlayerEvents;
 using static GorillaLibrary.Events.RoomEvents;
 using static GorillaLibrary.Events.ServerEvents;
 using static GorillaLibrary.Events.ZoneEvents;
+#endregion
 
 [assembly: MelonInfo(typeof(Mod), "GorillaLibrary", "1.0.0", "dev9998")]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
@@ -94,7 +97,7 @@ internal class Mod : GorillaMod
                     break;
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             LoggerInstance.Error(ex);
         }

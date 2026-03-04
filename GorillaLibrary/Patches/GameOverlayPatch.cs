@@ -4,9 +4,9 @@ namespace GorillaLibrary.Patches
 {
     internal class GameOverlayPatch
     {
-        public static void Postfix(GorillaTagger __instance, bool ___isGameOverlayActive)
+        public static void Postfix(bool ___isGameOverlayActive)
         {
-            GorillaLibrary.Instance.Bus.Publish(new GameOverlayActivationEvent(___isGameOverlayActive));
+            GorillaMod.Bus.Publish(new GameOverlayActivationEvent(___isGameOverlayActive));
         }
     }
 }
