@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace GorillaLibrary.Events
+namespace GorillaLibrary.Events.System
 {
     public class EventBus
     {
