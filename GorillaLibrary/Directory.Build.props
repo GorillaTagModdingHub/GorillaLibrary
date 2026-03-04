@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+	<PropertyGroup>
+		<GamePath>C:\Program Files (x86)\Steam\steamapps\common\Gorilla Tag</GamePath>
+		<GameAssemblyPath>$(GamePath)\Gorilla Tag_Data\Managed</GameAssemblyPath>
+		<MelonLoaderAssemblyPath>$(GamePath)\MelonLoader\net35</MelonLoaderAssemblyPath>
+		<ModsPath>$(GamePath)\Mods</ModsPath>
+		<PluginsPath>$(GamePath)\Plugins</PluginsPath>
+	</PropertyGroup>
+</Project>

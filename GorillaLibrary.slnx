@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="GorillaLibrary.GameModes/GorillaLibrary.GameModes.csproj" />
+  <Project Path="GorillaLibrary/GorillaLibrary.csproj" />
+</Solution>
