@@ -16,14 +16,14 @@ using GorillaLibrary.Utilities;
 
 namespace GorillaLibrary;
 
-internal class Mod : MelonMod
+internal class Mod : GorillaMod
 {
     public override void OnEarlyInitializeMelon()
     {
         MothershipClientApiUnity.OnMessageNotificationSocket += OnMothershipMessageRecieved;
     }
 
-    public override void OnLateInitializeMelon()
+    protected override void Start()
     {
         NetworkSystem.Instance.OnMultiplayerStarted += OnRoomJoined;
         NetworkSystem.Instance.OnReturnedToSinglePlayer += OnRoomLeft;
