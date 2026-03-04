@@ -14,6 +14,7 @@ using UnityEngine.Networking;
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
 [assembly: MelonColor(255, 85, 82, 235)]
 [assembly: MelonAdditionalCredits("GorillaLibrary Open-Source Contributors")]
+[assembly: MelonAdditionalDependencies("GorillaLibrary")]
 
 namespace GorillaLibrary.Web
 {
