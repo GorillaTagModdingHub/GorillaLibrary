@@ -13,6 +13,7 @@ using static GorillaLibrary.Events.GameEvents;
 using static GorillaLibrary.Events.PlayerEvents;
 using static GorillaLibrary.Events.RoomEvents;
 using static GorillaLibrary.Events.ServerEvents;
+using static GorillaLibrary.Events.ZoneEvents;
 
 [assembly: MelonInfo(typeof(Mod), "GorillaLibrary", "1.0.0", "dev9998")]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
@@ -38,7 +39,7 @@ internal class Mod : GorillaMod
         ZoneManagement.OnZoneChange += zoneData =>
         {
             IEnumerable<GTZone> activeZones = zoneData.Where(data => data.active).Select(data => data.zone);
-            ZoneEvents.OnZonesChanged?.InvokeSafe(activeZones);
+            Bus.Publish(new ZonesChangedEvent(activeZones));
         };
 
         GameUtility.Initialize();
