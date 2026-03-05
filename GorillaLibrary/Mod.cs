@@ -25,12 +25,12 @@ namespace GorillaLibrary;
 
 internal class Mod : GorillaMod
 {
-    public override void OnEarlyInitializeMelon()
+    protected override void OnEarlyInitialize()
     {
         MothershipClientApiUnity.OnMessageNotificationSocket += OnMothershipMessageRecieved;
     }
 
-    protected override void Start()
+    protected override void OnLateInitialize()
     {
         NetworkSystem.Instance.OnMultiplayerStarted += OnRoomJoined;
         NetworkSystem.Instance.OnReturnedToSinglePlayer += OnRoomLeft;
