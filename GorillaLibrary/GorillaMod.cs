@@ -1,6 +1,8 @@
 ﻿using GorillaLibrary.Events.System;
 using MelonLoader;
 
+namespace GorillaLibrary;
+
 public abstract class GorillaMod : MelonMod
 {
     public static readonly EventBus Bus = new();
