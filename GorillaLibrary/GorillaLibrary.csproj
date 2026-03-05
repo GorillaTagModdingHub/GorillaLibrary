@@ -5,18 +5,30 @@
 		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<GamePath>/home/lofiat/.local/share/Steam/steamapps/common/Gorilla Tag</GamePath>
+		<GameAssemblyPath>$(GamePath)\Gorilla Tag_Data\Managed</GameAssemblyPath>
+		<MelonLoaderAssemblyPath>$(GamePath)\MelonLoader\net35</MelonLoaderAssemblyPath>
+		<ModsPath>$(GamePath)\Mods</ModsPath>
+		<PluginsPath>$(GamePath)\Plugins</PluginsPath>
+	</PropertyGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Copy SourceFiles="$(TargetPath);bin/Debug/$(TargetFramework)/GorillaLibrary.Web.pdb" DestinationFiles="$(GamePath)/Mods/GorillaLibrary.Web.dll;$(GamePath)/Mods/GorillaLibrary.Web.pdb" />
+	</Target>
+
 	<ItemGroup>
 		<Reference Include="0Harmony">
 			<HintPath>$(MelonLoaderAssemblyPath)\0Harmony.dll</HintPath>
 		</Reference>
 		<Reference Include="AA.Mothership">
-		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\AA.Mothership.dll</HintPath>
+		  <HintPath>$(GameAssemblyPath)\AA.Mothership.dll</HintPath>
 		</Reference>
 		<Reference Include="Assembly-CSharp">
 			<HintPath>$(GameAssemblyPath)\Assembly-CSharp.dll</HintPath>
 		</Reference>
 		<Reference Include="Fusion.Runtime">
-		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Fusion.Runtime.dll</HintPath>
+		  <HintPath>$(GameAssemblyPath)\Fusion.Runtime.dll</HintPath>
 		</Reference>
 		<Reference Include="MelonLoader">
 			<HintPath>$(MelonLoaderAssemblyPath)\MelonLoader.dll</HintPath>
@@ -34,13 +46,13 @@
 			<HintPath>$(GameAssemblyPath)\PhotonUnityNetworking.dll</HintPath>
 		</Reference>
 		<Reference Include="PlayFab">
-		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\PlayFab.dll</HintPath>
+		  <HintPath>$(GameAssemblyPath)\PlayFab.dll</HintPath>
 		</Reference>
 		<Reference Include="SteamVR">
-		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\SteamVR.dll</HintPath>
+		  <HintPath>$(GameAssemblyPath)\SteamVR.dll</HintPath>
 		</Reference>
 		<Reference Include="SteamVR_Actions">
-		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\SteamVR_Actions.dll</HintPath>
+		  <HintPath>$(GameAssemblyPath)\SteamVR_Actions.dll</HintPath>
 		</Reference>
 		<Reference Include="Unity.Addressables">
 			<HintPath>$(GameAssemblyPath)\Unity.Addressables.dll</HintPath>
