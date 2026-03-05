@@ -16,6 +16,7 @@ using static GorillaLibrary.Events.PlayerEvents;
 using static GorillaLibrary.Events.RoomEvents;
 using static GorillaLibrary.Events.ServerEvents;
 using static GorillaLibrary.Events.ZoneEvents;
+using GorillaLibrary.Events.System;
 #endregion
 
 [assembly: MelonInfo(typeof(Mod), "GorillaLibrary", "1.0.0", "dev9998")]

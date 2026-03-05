@@ -11,28 +11,28 @@ namespace GorillaLibrary.Events.System
 
         public void Subscribe(object target)
         {
-            var props = target.GetType()
+            PropertyInfo[] props = target.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-            foreach (var prop in props)
+            foreach (PropertyInfo prop in props)
             {
                 if (!prop.PropertyType.IsGenericType) continue;
                 if (prop.PropertyType.GetGenericTypeDefinition() != typeof(Listener<>)) continue;
 
-                var eventType = prop.PropertyType.GetGenericArguments()[0];
-                var listenerObj = prop.GetValue(target);
+                Type eventType = prop.PropertyType.GetGenericArguments()[0];
+                object listenerObj = prop.GetValue(target);
 
                 if (listenerObj == null) continue;
 
-                var handler = listenerObj
+                object handler = listenerObj
                     .GetType()
                     .GetProperty("Handler")
                     .GetValue(listenerObj);
 
-                var actionType = typeof(Action<>).MakeGenericType(eventType);
-                var del = Delegate.CreateDelegate(actionType, handler, handler.GetType().GetMethod("Invoke"));
+                Type actionType = typeof(Action<>).MakeGenericType(eventType);
+                Delegate del = Delegate.CreateDelegate(actionType, handler, handler.GetType().GetMethod("Invoke"));
 
-                if (!_listeners.TryGetValue(eventType, out var list))
+                if (!_listeners.TryGetValue(eventType, out List<Delegate> list))
                 {
                     list = [];
                     _listeners[eventType] = list;
@@ -40,6 +40,24 @@ namespace GorillaLibrary.Events.System
 
                 list.Add(del);
             }
+        }
+
+        public void Subscribe<TEvent>(Listener<TEvent> listener) where TEvent : IEvent
+        {
+            if (listener == null) return;
+
+            Type eventType = typeof(TEvent);
+            Delegate del = listener.Handler;
+
+            if (del == null) return;
+
+            if (!_listeners.TryGetValue(eventType, out List<Delegate> list))
+            {
+                list = [];
+                _listeners[eventType] = list;
+            }
+
+            list.Add(del);
         }
 
         public void Unsubscribe(object target)
