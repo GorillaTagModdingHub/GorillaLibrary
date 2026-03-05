@@ -7,7 +7,7 @@ public abstract class GorillaMod : MelonMod
 {
     public static readonly EventBus Bus = new();
 
-    public virtual bool Toggleable => true;
+    protected virtual bool Toggleable => true;
 
     private bool _enabled = true;
     public bool Enabled

@@ -25,6 +25,8 @@ namespace GorillaLibrary;
 
 internal class Mod : GorillaMod
 {
+    protected override bool Toggleable => false;
+
     protected override void OnEarlyInitialize()
     {
         MothershipClientApiUnity.OnMessageNotificationSocket += OnMothershipMessageRecieved;
