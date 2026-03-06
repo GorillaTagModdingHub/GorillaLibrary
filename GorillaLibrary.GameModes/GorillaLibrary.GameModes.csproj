@@ -3,20 +3,8 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.1</TargetFramework>
 		<LangVersion>preview</LangVersion>
-		<RootNamespace>GorillaLibrary.Modding</RootNamespace>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
-
-	<PropertyGroup>
-		<GamePath>/home/lofiat/.local/share/Steam/steamapps/common/Gorilla Tag</GamePath>
-		<GameAssemblyPath>$(GamePath)\Gorilla Tag_Data\Managed</GameAssemblyPath>
-		<MelonLoaderAssemblyPath>$(GamePath)\MelonLoader\net35</MelonLoaderAssemblyPath>
-		<ModsPath>$(GamePath)\Mods</ModsPath>
-		<PluginsPath>$(GamePath)\Plugins</PluginsPath>
-	</PropertyGroup>
-
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Copy SourceFiles="$(TargetPath);bin/Debug/$(TargetFramework)/GorillaLibrary.Web.pdb" DestinationFiles="$(GamePath)/Mods/GorillaLibrary.Web.dll;$(GamePath)/Mods/GorillaLibrary.Web.pdb" />
-	</Target>
 
 	<ItemGroup>
 		<Reference Include="0Harmony">
