@@ -41,7 +41,7 @@ public static class RigExtensions
         return bone switch
         {
             GorillaRigBone.Head => ik.headBone ?? rig.headMesh.transform,
-            GorillaRigBone.Body => ik.bodyBone.Find("body"),
+            GorillaRigBone.Body => ik.bodyBone.Find("body") ?? ik.bodyBone,
             GorillaRigBone.LeftUpperArm => ik.leftUpperArm ?? ik.bodyBone.Find("shoulder.L"),
             GorillaRigBone.RightUpperArm => ik.rightUpperArm ?? ik.bodyBone.Find("shoulder.R"),
             GorillaRigBone.LeftLowerArm => ik.leftLowerArm ?? ik.bodyBone.Find("shoulder.L/forearm.L"),
