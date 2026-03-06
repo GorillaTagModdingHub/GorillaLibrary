@@ -45,6 +45,7 @@ internal class Mod : MelonMod
 
         GameUtility.Initialize();
         InputUtility.Initialize();
+        RigUtility.Initialize();
 
         PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
         GorillaTagger.OnPlayerSpawned(Events.Game.OnGameInitialized.Invoke);
