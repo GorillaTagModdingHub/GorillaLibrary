@@ -51,6 +51,11 @@ internal class Mod : MelonMod
         GorillaTagger.OnPlayerSpawned(Events.Game.OnGameInitialized.Invoke);
     }
 
+    public override void OnUpdate()
+    {
+        InputUtility.Update();
+    }
+
     private void OnEvent(EventData data)
     {
         try
