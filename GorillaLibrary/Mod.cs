@@ -1,15 +1,15 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaLibrary;
-using GorillaLibrary.Events;
+using GorillaLibrary.Patches;
+using GorillaLibrary.Utilities;
+using HarmonyLib;
 using MelonLoader;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HarmonyLib;
 using System.Reflection;
-using GorillaLibrary.Patches;
-using GorillaLibrary.Utilities;
+using System.Runtime.CompilerServices;
 
 [assembly: MelonInfo(typeof(Mod), "GorillaLibrary", "1.0.0", "dev9998")]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
@@ -20,58 +20,34 @@ internal class Mod : MelonMod
 {
     public override void OnEarlyInitializeMelon()
     {
-        MothershipClientApiUnity.OnMessageNotificationSocket += OnMothershipMessageRecieved;
-    }
+        RuntimeHelpers.RunClassConstructor(typeof(Events).TypeHandle);
 
-    public override void OnLateInitializeMelon()
-    {
-        NetworkSystem.Instance.OnMultiplayerStarted += OnRoomJoined;
-        NetworkSystem.Instance.OnReturnedToSinglePlayer += OnRoomLeft;
-        NetworkSystem.Instance.OnPlayerJoined += OnPlayerEntered;
-        NetworkSystem.Instance.OnPlayerLeft += OnPlayerLeft;
-
-        PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
-
-        ZoneManagement.OnZoneChange += zoneData =>
-        {
-            IEnumerable<GTZone> activeZones = zoneData.Where(data => data.active).Select(data => data.zone);
-            ZoneEvents.OnZonesChanged?.InvokeSafe(activeZones);
-        };
-
-        GameUtility.Initialize();
-        InputUtility.Initialize();
+        MothershipClientApiUnity.OnMessageNotificationSocket += (notif, _) => Events.Server.OnMothershipMessageRecieved.Invoke(notif.Title, notif.Body);
 
         if (AccessTools.Method(typeof(GorillaTagger), "OnGameOverlayActivated") is MethodInfo method)
         {
             HarmonyInstance.Patch(method, postfix: new(AccessTools.Method(typeof(GameOverlayPatch), nameof(GameOverlayPatch.Postfix)), priority: HarmonyLib.Priority.First));
         }
-
-        Events.GameEvents.OnGameInitialized?.InvokeSafe();
     }
 
-    private void OnMothershipMessageRecieved(NotificationsMessageResponse notification, nint _)
+    public override void OnLateInitializeMelon()
     {
-        ServerEvents.OnMothershipMessageRecieved?.InvokeSafe(notification.Title, notification.Body);
-    }
+        NetworkSystem.Instance.OnMultiplayerStarted += Events.Room.OnRoomJoined.Invoke;
+        NetworkSystem.Instance.OnReturnedToSinglePlayer += Events.Room.OnRoomLeft.Invoke;
+        NetworkSystem.Instance.OnPlayerJoined += Events.Player.OnPlayerEnteredRoom.Invoke;
+        NetworkSystem.Instance.OnPlayerLeft += Events.Player.OnPlayerLeftRoom.Invoke;
 
-    private void OnRoomJoined()
-    {
-        RoomEvents.OnRoomJoined?.InvokeSafe();
-    }
+        ZoneManagement.OnZoneChange += zoneData =>
+        {
+            IEnumerable<GTZone> activeZones = zoneData.Where(data => data.active).Select(data => data.zone);
+            Events.Zone.OnZonesChanged.Invoke(activeZones);
+        };
 
-    private void OnRoomLeft()
-    {
-        RoomEvents.OnRoomLeft?.InvokeSafe();
-    }
+        GameUtility.Initialize();
+        InputUtility.Initialize();
 
-    private void OnPlayerEntered(NetPlayer netPlayer)
-    {
-        PlayerEvents.OnPlayerEnteredRoom?.InvokeSafe(netPlayer);
-    }
-
-    private void OnPlayerLeft(NetPlayer netPlayer)
-    {
-        PlayerEvents.OnPlayerLeftRoom?.InvokeSafe(netPlayer);
+        PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
+        GorillaTagger.OnPlayerSpawned(Events.Game.OnGameInitialized.Invoke);
     }
 
     private void OnEvent(EventData data)
@@ -85,7 +61,7 @@ internal class Mod : MelonMod
                     if (NetworkSystem.Instance is NetworkSystem netSys && netSys.GetPlayer(data.Sender) is NetPlayer netPlayer && hashtable.TryGetValue(byte.MaxValue, out object value))
                     {
                         string nickName = value as string;
-                        PlayerEvents.OnPlayerNameChanged.InvokeSafe(netPlayer, nickName);
+                        Events.Player.OnPlayerNameChanged.Invoke(netPlayer, nickName);
                     }
                     break;
             }

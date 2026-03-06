@@ -1,12 +1,9 @@
-﻿using GorillaLibrary.Events;
+﻿namespace GorillaLibrary.Patches;
 
-namespace GorillaLibrary.Patches
+internal class GameOverlayPatch
 {
-    internal class GameOverlayPatch
+    public static void Postfix(bool ___isGameOverlayActive)
     {
-        public static void Postfix(GorillaTagger __instance, bool ___isGameOverlayActive)
-        {
-            PlayerEvents.OnGameOverlayActivation?.InvokeSafe(___isGameOverlayActive);
-        }
+        Events.Player.OnGameOverlayActivation.Invoke(___isGameOverlayActive);
     }
 }

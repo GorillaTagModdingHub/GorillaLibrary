@@ -1,6 +1,8 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
   <Project Path="GorillaLibrary.GameModes/GorillaLibrary.GameModes.csproj" />
   <Project Path="GorillaLibrary/GorillaLibrary.csproj" />
-  <Project Path="GorillaLibrary.Web/GorillaLibrary.Web.csproj" />
 </Solution>
 
