@@ -68,7 +68,7 @@ public static class RigUtility
         
         public NetInputTracker(NetInputType type, bool leftHand)
         {
-            if (typeof(T) != typeof(bool) && typeof(T) == typeof(float))
+            if (typeof(T) != typeof(bool) && typeof(T) != typeof(float))
                 throw new ArgumentException("NetInputTracker only accepts bool and float.");
             if (typeof(T) == typeof(float) && type != NetInputType.Grip && type != NetInputType.Trigger)
                 throw new ArgumentException("Only trigger and grip inputs can be floats.");
