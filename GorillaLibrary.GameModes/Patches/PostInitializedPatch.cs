@@ -1,6 +1,7 @@
-﻿using HarmonyLib;
+﻿using GorillaLibrary.GameModes.Events;
+using HarmonyLib;
 
-namespace GorillaLibrary.Modding.Patches
+namespace GorillaLibrary.GameModes.Patches
 {
     [HarmonyPatch(typeof(GorillaTagger), "Start")]
     internal static class PostInitializedPatch

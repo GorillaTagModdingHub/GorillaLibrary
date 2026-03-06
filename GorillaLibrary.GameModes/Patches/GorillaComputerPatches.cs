@@ -1,6 +1,7 @@
 ﻿using GorillaGameModes;
-using GorillaLibrary.Modding.Models;
-using GorillaLibrary.Modding.Utilities;
+using GorillaLibrary.GameModes;
+using GorillaLibrary.GameModes.Models;
+using GorillaLibrary.GameModes.Utilities;
 using GorillaNetworking;
 using HarmonyLib;
 using MelonLoader;
@@ -12,7 +13,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
 
-namespace GorillaLibrary.Modding.Patches
+namespace GorillaLibrary.GameModes.Patches
 {
     [HarmonyPatch(typeof(GorillaComputer))]
     internal static class GorillaComputerPatches

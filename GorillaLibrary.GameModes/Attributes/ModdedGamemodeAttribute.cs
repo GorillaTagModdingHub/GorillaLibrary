@@ -1,8 +1,8 @@
 ﻿using GorillaGameModes;
-using GorillaLibrary.Modding.Models;
+using GorillaLibrary.GameModes.Models;
 using System;
 
-namespace GorillaLibrary.Modding.Attributes
+namespace GorillaLibrary.GameModes.Attributes
 {
     /// <summary>
     /// Tells Utilla that a plugin wants to use attributes for room join callbacks.

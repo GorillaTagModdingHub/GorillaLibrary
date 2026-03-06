@@ -1,10 +1,11 @@
 ﻿using GorillaGameModes;
-using GorillaLibrary.Modding.Models;
-using GorillaLibrary.Modding.Utilities;
+using GorillaLibrary.GameModes;
+using GorillaLibrary.GameModes.Models;
+using GorillaLibrary.GameModes.Utilities;
 using HarmonyLib;
 using MelonLoader;
 
-namespace GorillaLibrary.Modding.Patches;
+namespace GorillaLibrary.GameModes.Patches;
 
 [HarmonyPatch(typeof(GameMode), "FindGameModeInString")]
 internal class GameModeSearchPatch

@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GorillaLibrary.Modding.Patches;
+namespace GorillaLibrary.GameModes.Patches;
 
 [HarmonyPatch(typeof(GorillaGameManager)), HarmonyWrapSafe]
 internal class GameModePatches

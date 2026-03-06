@@ -1,11 +1,12 @@
 ﻿using ExitGames.Client.Photon;
-using GorillaLibrary.Modding.Utilities;
+using GorillaLibrary.GameModes.Events;
+using GorillaLibrary.GameModes.Utilities;
 using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 
-namespace GorillaLibrary.Modding.Behaviours
+namespace GorillaLibrary.GameModes.Behaviours
 {
     internal class NetworkController : MonoBehaviourPunCallbacks
     {

@@ -1,11 +1,11 @@
 ﻿using GorillaGameModes;
-using GorillaLibrary.Modding.Models;
-using GorillaLibrary.Modding.Utilities;
+using GorillaLibrary.GameModes.Models;
+using GorillaLibrary.GameModes.Utilities;
 using HarmonyLib;
 using System;
 using System.Reflection;
 
-namespace GorillaLibrary.Modding.Patches;
+namespace GorillaLibrary.GameModes.Patches;
 
 [HarmonyPatch]
 internal class EnumParsePatch

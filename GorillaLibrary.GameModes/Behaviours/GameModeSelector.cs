@@ -1,5 +1,6 @@
 ﻿using GorillaGameModes;
-using GorillaLibrary.Modding.Models;
+using GorillaLibrary.GameModes;
+using GorillaLibrary.GameModes.Models;
 using GorillaNetworking;
 using GorillaTag;
 using GorillaTagScripts.VirtualStumpCustomMaps;
@@ -14,7 +15,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace GorillaLibrary.Modding.Behaviours
+namespace GorillaLibrary.GameModes.Behaviours
 {
     [RequireComponent(typeof(GameModeSelectorButtonLayout)), DisallowMultipleComponent]
     internal class GameModeSelector : MonoBehaviour

@@ -1,8 +1,10 @@
 ﻿using GorillaGameModes;
-using GorillaLibrary.Modding.Attributes;
-using GorillaLibrary.Modding.Models;
-using GorillaLibrary.Modding.Patches;
-using GorillaLibrary.Modding.Utilities;
+using GorillaLibrary.GameModes;
+using GorillaLibrary.GameModes.Attributes;
+using GorillaLibrary.GameModes.Events;
+using GorillaLibrary.GameModes.Models;
+using GorillaLibrary.GameModes.Patches;
+using GorillaLibrary.GameModes.Utilities;
 using GorillaNetworking;
 using HarmonyLib;
 using MelonLoader;
@@ -14,7 +16,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace GorillaLibrary.Modding.Behaviours
+namespace GorillaLibrary.GameModes.Behaviours
 {
     internal class GameModeManager : MonoBehaviour
     {

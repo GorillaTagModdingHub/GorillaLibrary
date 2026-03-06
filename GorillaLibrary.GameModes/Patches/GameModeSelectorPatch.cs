@@ -1,9 +1,9 @@
-using GorillaLibrary.Modding.Behaviours;
+using GorillaLibrary.GameModes.Behaviours;
 using HarmonyLib;
 using System;
 using System.Reflection;
 
-namespace GorillaLibrary.Modding.Patches
+namespace GorillaLibrary.GameModes.Patches
 {
     [HarmonyPatch(typeof(GameModeSelectorButtonLayout))]
     internal class GameModeSelectorPatch

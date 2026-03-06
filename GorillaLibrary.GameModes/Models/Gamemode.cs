@@ -1,9 +1,10 @@
 ﻿using GorillaGameModes;
-using GorillaLibrary.Modding.Utilities;
+using GorillaLibrary.GameModes;
+using GorillaLibrary.GameModes.Utilities;
 using MelonLoader;
 using System;
 
-namespace GorillaLibrary.Modding.Models;
+namespace GorillaLibrary.GameModes.Models;
 
 public class Gamemode
 {

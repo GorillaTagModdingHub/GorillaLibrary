@@ -1,9 +1,9 @@
-﻿using GorillaLibrary.Modding.Behaviours;
+﻿using GorillaLibrary.GameModes.Behaviours;
 using GorillaTagScripts.VirtualStumpCustomMaps;
 using HarmonyLib;
 using System.Collections.Generic;
 
-namespace GorillaLibrary.Modding.Patches
+namespace GorillaLibrary.GameModes.Patches
 {
     [HarmonyPatch(typeof(CustomMapModeSelector)), HarmonyWrapSafe]
     internal class VirtualStumpSelectorPatch

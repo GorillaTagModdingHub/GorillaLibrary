@@ -1,12 +1,12 @@
 ﻿using GorillaGameModes;
-using GorillaLibrary.Modding.Behaviours;
-using GorillaLibrary.Modding.Models;
+using GorillaLibrary.GameModes.Behaviours;
+using GorillaLibrary.GameModes.Models;
 using HarmonyLib;
 using System;
 using System.Globalization;
 using System.Linq;
 
-namespace GorillaLibrary.Modding.Utilities;
+namespace GorillaLibrary.GameModes.Utilities;
 
 public static class GameModeUtility
 {

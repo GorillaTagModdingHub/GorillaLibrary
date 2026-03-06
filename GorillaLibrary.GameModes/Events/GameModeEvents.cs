@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GorillaLibrary.Modding;
+namespace GorillaLibrary.GameModes.Events;
 
 public class GameModeEvents
 {

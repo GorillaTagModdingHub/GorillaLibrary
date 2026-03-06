@@ -1,4 +1,4 @@
-﻿namespace GorillaLibrary.Modding;
+﻿namespace GorillaLibrary.GameModes;
 
 public class Constants
 {

@@ -1,5 +1,6 @@
-﻿using GorillaLibrary.Modding;
-using GorillaLibrary.Modding.Behaviours;
+﻿using GorillaLibrary.GameModes;
+using GorillaLibrary.GameModes.Behaviours;
+using GorillaLibrary.GameModes.Events;
 using MelonLoader;
 using System;
 using UnityEngine;
@@ -8,7 +9,7 @@ using UnityEngine;
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
 [assembly: MelonAdditionalDependencies("GorillaLibrary")]
 
-namespace GorillaLibrary.Modding;
+namespace GorillaLibrary.GameModes;
 
 internal class Mod : MelonMod
 {

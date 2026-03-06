@@ -1,9 +1,9 @@
-﻿using GorillaLibrary.Modding.Models;
+﻿using GorillaLibrary.GameModes.Models;
 using MelonLoader;
 using System;
 using System.Linq;
 
-namespace GorillaLibrary.Modding;
+namespace GorillaLibrary.GameModes;
 
 public class ModInfo
 {

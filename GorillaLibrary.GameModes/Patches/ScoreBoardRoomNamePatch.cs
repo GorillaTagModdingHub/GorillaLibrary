@@ -1,8 +1,8 @@
-﻿using GorillaLibrary.Modding.Models;
-using GorillaLibrary.Modding.Utilities;
+﻿using GorillaLibrary.GameModes.Models;
+using GorillaLibrary.GameModes.Utilities;
 using HarmonyLib;
 
-namespace GorillaLibrary.Modding.Patches
+namespace GorillaLibrary.GameModes.Patches
 {
     [HarmonyPatch(typeof(GorillaScoreBoard), "RoomType"), HarmonyPriority(Priority.VeryHigh)]
     internal class ScoreBoardRoomNamePatch

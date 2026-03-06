@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GorillaLibrary.Modding.Attributes
+namespace GorillaLibrary.GameModes.Attributes
 {
     /// <summary>
     /// This attribute marks a method to be called when a modded lobby is left.
