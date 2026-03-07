@@ -8,13 +8,13 @@ namespace GorillaLibrary.Models;
 // https://github.com/developer9998/Bark/blob/76e893492845b620c6567be68f6e14bf0cbd49ba/Interaction/GestureTracker.cs#L347
 public abstract class InputTracker
 {
-    internal bool pressed, wasPressed;
-    internal Vector3 vector3Value;
-    internal Quaternion quaternionValue;
-    internal XRNode node;
-    internal string name;
-    internal Traverse traverse;
-    internal Action<InputTracker> OnPressed, OnReleased;
+    public bool pressed, wasPressed;
+    public Vector3 vector3Value;
+    public Quaternion quaternionValue;
+    public XRNode node;
+    public string name;
+    public Traverse traverse;
+    public Action<InputTracker> OnPressed, OnReleased;
 
     public abstract void UpdateValues();
 }

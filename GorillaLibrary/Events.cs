@@ -6,17 +6,17 @@ namespace GorillaLibrary;
 
 public class Events
 {
-    public static GameEvents Game = new();
+    public static readonly GameEvents Game = new();
 
-    public static PlayerEvents Player = new();
+    public static readonly PlayerEvents Player = new();
 
-    public static RigEvents Rig = new();
+    public static readonly RigEvents Rig = new();
 
-    public static RoomEvents Room = new();
+    public static readonly RoomEvents Room = new();
 
-    public static ServerEvents Server = new();
+    public static readonly ServerEvents Server = new();
 
-    public static ZoneEvents Zone = new();
+    public static readonly ZoneEvents Zone = new();
 
     public class GameEvents
     {

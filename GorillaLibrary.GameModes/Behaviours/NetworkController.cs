@@ -1,5 +1,5 @@
 ﻿using ExitGames.Client.Photon;
-using GorillaLibrary.GameModes.Events;
+using GorillaLibrary.GameModes.Models;
 using GorillaLibrary.GameModes.Utilities;
 using HarmonyLib;
 using Photon.Pun;
@@ -12,7 +12,7 @@ namespace GorillaLibrary.GameModes.Behaviours
     {
         public static NetworkController Instance { get; private set; }
 
-        private GameModeEvents.RoomJoinedArgs lastRoom;
+        private InternalRoom lastRoom;
 
         public override void OnEnable()
         {
@@ -65,12 +65,13 @@ namespace GorillaLibrary.GameModes.Behaviours
 
             GameModeUtility.CurrentGamemode = GameModeUtility.FindGamemodeInString(gameMode);
 
-            GameModeEvents.RoomJoinedArgs args = new()
+            InternalRoom args = new()
             {
-                isPrivate = isPrivate,
+                IsPrivate = isPrivate,
                 Gamemode = gameMode
             };
-            GameModeEvents.Instance.TriggerRoomJoin(args);
+
+            GameModeManager.Instance.OnRoomJoin(args);
 
             lastRoom = args;
 
@@ -85,7 +86,7 @@ namespace GorillaLibrary.GameModes.Behaviours
 
             if (lastRoom != null)
             {
-                GameModeEvents.Instance.TriggerRoomLeft(lastRoom);
+                GameModeManager.Instance.OnRoomLeft(lastRoom);
                 lastRoom = null;
             }
         }
@@ -96,14 +97,14 @@ namespace GorillaLibrary.GameModes.Behaviours
 
             GameModeUtility.CurrentGamemode = GameModeUtility.FindGamemodeInString(gameMode);
 
-            if (lastRoom.Gamemode != gameMode || lastRoom.isPrivate != NetworkSystem.Instance.SessionIsPrivate)
+            if (lastRoom.Gamemode != gameMode || lastRoom.IsPrivate != NetworkSystem.Instance.SessionIsPrivate)
             {
-                GameModeManager.Instance.OnRoomLeft(null, lastRoom);
+                GameModeManager.Instance.OnRoomLeft(lastRoom);
 
                 lastRoom.Gamemode = gameMode;
-                lastRoom.isPrivate = NetworkSystem.Instance.SessionIsPrivate;
+                lastRoom.IsPrivate = NetworkSystem.Instance.SessionIsPrivate;
 
-                GameModeManager.Instance.OnRoomJoin(null, lastRoom);
+                GameModeManager.Instance.OnRoomJoin(lastRoom);
             }
         }
     }

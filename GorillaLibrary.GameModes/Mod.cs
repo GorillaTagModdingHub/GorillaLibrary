@@ -1,8 +1,6 @@
 ﻿using GorillaLibrary.GameModes;
 using GorillaLibrary.GameModes.Behaviours;
-using GorillaLibrary.GameModes.Events;
 using MelonLoader;
-using System;
 using UnityEngine;
 
 [assembly: MelonInfo(typeof(Mod), "GorillaLibrary.GameModes", "1.0.0", "dev9998")]
@@ -15,11 +13,11 @@ internal class Mod : MelonMod
 {
     public override void OnEarlyInitializeMelon()
     {
-        GameModeEvents.GameInitialized += OnGameInitialized;
+        Events.Game.OnGameInitialized.Subscribe(OnGameInitialized);
     }
 
-    public void OnGameInitialized(object sender, EventArgs args)
+    public void OnGameInitialized()
     {
-        UnityEngine.Object.DontDestroyOnLoad(new GameObject("Utilla", typeof(NetworkController), typeof(GameModeManager)));
+        Object.DontDestroyOnLoad(new GameObject("Utilla", typeof(NetworkController), typeof(GameModeManager)));
     }
 }

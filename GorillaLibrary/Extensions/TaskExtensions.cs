@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using UnityEngine;
+﻿using GorillaLocomotion;
 using System.Collections;
-using GorillaLocomotion;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace GorillaLibrary.Extensions;
 

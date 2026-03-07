@@ -72,7 +72,7 @@ internal class Mod : MelonMod
                     break;
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             LoggerInstance.Error(ex);
         }

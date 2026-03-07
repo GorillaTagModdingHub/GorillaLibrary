@@ -1,7 +1,7 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
-using HarmonyLib;
 
 namespace GorillaLibrary.Utilities;
 
@@ -9,13 +9,13 @@ public static class RigUtility
 {
     public static VRRig LocalRig => VRRig.LocalRig ?? GorillaTagger.Instance.offlineVRRig;
 
-    public static bool Initialized => (bool)AccessTools.Property(typeof(VRRig).Assembly.GetType("VRRigCache"), "isInitialized").GetValue(null);
-    
-    public static Dictionary<NetPlayer, RigContainer> Rigs => (Dictionary<NetPlayer, RigContainer>)AccessTools.Field(typeof(VRRig).Assembly.GetType("VRRigCache"), "rigsInUse").GetValue(null);
+    public static bool Initialized => VRRigCache.isInitialized;
+
+    public static Dictionary<NetPlayer, RigContainer> Rigs => (Dictionary<NetPlayer, RigContainer>)AccessTools.Field(typeof(VRRigCache), "rigsInUse").GetValue(null);
 
     public static NetInputTracker<float> LeftGrip { get; private set; }
     public static NetInputTracker<float> RightGrip { get; private set; }
-    
+
     public static NetInputTracker<float> LeftTrigger { get; private set; }
     public static NetInputTracker<float> RightTrigger { get; private set; }
 
@@ -29,43 +29,40 @@ public static class RigUtility
     {
         LeftGrip = new(NetInputType.Grip, true);
         RightGrip = new(NetInputType.Grip, false);
-        
+
         LeftTrigger = new(NetInputType.Trigger, true);
         RightTrigger = new(NetInputType.Trigger, false);
-        
+
         LeftFaceButton = new(NetInputType.FaceButtonPress, true);
         RightFaceButton = new(NetInputType.FaceButtonPress, false);
-        
+
         LeftFaceButtonTouch = new(NetInputType.FaceButtonTouch, true);
         RightFaceButtonTouch = new(NetInputType.FaceButtonTouch, false);
     }
 
     public static bool TryGetRig(NetPlayer player, out RigContainer rig)
     {
-        Assembly assembly = typeof(VRRig).Assembly;
-        var rigCache = assembly.GetType("VRRigCache");
-        object instance = AccessTools.Property(rigCache, "Instance").GetValue(rigCache, null);
-
-        if (instance == null)
+        if (VRRigCache.Instance is not VRRigCache instance)
         {
             rig = null;
             return false;
         }
 
+        Assembly assembly = typeof(VRRig).Assembly;
         object[] parameters = [player, null];
-        bool result = (bool)AccessTools.Method(rigCache, "TryGetVrrig", [typeof(NetPlayer), assembly.GetType("RigContainer&")]).Invoke(instance, parameters);
+        bool result = (bool)AccessTools.Method(typeof(VRRigCache), "TryGetVrrig", [typeof(NetPlayer), assembly.GetType("RigContainer&")]).Invoke(instance, parameters);
 
         rig = (RigContainer)parameters[1];
         return result;
     }
 
-    public static RigContainer TryGetRig(NetPlayer player) => TryGetRig(player, out RigContainer playerRig) ? playerRig : null;
-    
+    public static RigContainer GetRig(NetPlayer player) => TryGetRig(player, out RigContainer playerRig) ? playerRig : null;
+
     public class NetInputTracker<T>
     {
         private readonly NetInputType _inputType;
         private readonly bool _useLeftHand;
-        
+
         public NetInputTracker(NetInputType type, bool leftHand)
         {
             if (typeof(T) != typeof(bool) && typeof(T) != typeof(float))
@@ -80,7 +77,7 @@ public static class RigUtility
         public T GetValue(VRRig rig)
         {
             object returnValue = null; // need to convert to object first for type safety.
-            
+
             switch (_inputType)
             {
                 // Can't properly implement until garbage decimal is truncated
@@ -106,7 +103,7 @@ public static class RigUtility
             throw new Exception($"invalid input type {_inputType}.");
         }
     }
-    
+
     public enum NetInputType
     {
         FaceButtonTouch,
