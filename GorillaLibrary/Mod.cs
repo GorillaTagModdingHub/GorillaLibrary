@@ -18,6 +18,8 @@ namespace GorillaLibrary;
 
 internal class Mod : MelonMod
 {
+    internal static Action _unityAction;
+
     public override void OnEarlyInitializeMelon()
     {
         RuntimeHelpers.RunClassConstructor(typeof(Events).TypeHandle);
@@ -54,6 +56,23 @@ internal class Mod : MelonMod
     public override void OnUpdate()
     {
         InputUtility.Update();
+
+        if (_unityAction != null)
+        {
+            foreach(Action action in _unityAction.GetInvocationList().Cast<Action>())
+            {
+                try
+                {
+                    action.Invoke();
+                }
+                catch(Exception ex)
+                {
+                    LoggerInstance.Error(ex);
+                }
+            }
+
+            _unityAction = null;
+        }
     }
 
     private void OnEvent(EventData data)
