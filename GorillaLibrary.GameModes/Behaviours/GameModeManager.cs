@@ -264,7 +264,7 @@ internal class GameModeManager : MonoBehaviour
             {
                 try
                 {
-                    pluginInfo.OnGamemodeJoin?.Invoke(gamemode);//
+                    pluginInfo.OnGamemodeJoin?.Invoke(gamemode);
                     Melon<Mod>.Logger.Msg("Plugin is suitable for game mode");
                 }
                 catch (Exception ex)

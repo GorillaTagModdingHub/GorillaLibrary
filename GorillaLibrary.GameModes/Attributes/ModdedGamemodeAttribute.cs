@@ -4,13 +4,6 @@ using System;
 
 namespace GorillaLibrary.GameModes.Attributes
 {
-    /// <summary>
-    /// Tells Utilla that a plugin wants to use attributes for room join callbacks.
-    /// </summary>
-    /// <remarks>
-    /// This attribute does nothing by itself.
-    /// This attribute must be applied to the class marked with [BepInPlugin].
-    /// </remarks>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class ModdedGamemodeAttribute : Attribute
     {

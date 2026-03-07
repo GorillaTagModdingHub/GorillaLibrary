@@ -1,4 +1,5 @@
 ﻿using GorillaLibrary.GameModes;
+using GorillaLibrary.GameModes.Attributes;
 using GorillaLibrary.GameModes.Behaviours;
 using MelonLoader;
 using UnityEngine;
@@ -9,6 +10,7 @@ using UnityEngine;
 
 namespace GorillaLibrary.GameModes;
 
+[ModdedGamemode]
 internal class Mod : MelonMod
 {
     public override void OnEarlyInitializeMelon()
@@ -19,5 +21,17 @@ internal class Mod : MelonMod
     public void OnGameInitialized()
     {
         Object.DontDestroyOnLoad(new GameObject("Utilla", typeof(NetworkController), typeof(GameModeManager)));
+    }
+
+    [ModdedGamemodeJoin]
+    public void OnModdedJoin()
+    {
+        LoggerInstance.Msg("ModdedGamemodeJoin");
+    }
+
+    [ModdedGamemodeLeave]
+    public void OnModdedLeave()
+    {
+        LoggerInstance.Msg("ModdedGamemodeLeave");
     }
 }
