@@ -34,8 +34,6 @@ internal sealed class Mod : MelonMod
         {
             HarmonyInstance.Patch(method, postfix: new(AccessTools.Method(typeof(GameOverlayPatch), nameof(GameOverlayPatch.Postfix)), priority: HarmonyLib.Priority.First));
         }
-
-        GorillaTagger.OnPlayerSpawned(Events.Game.OnGameInitialized.Invoke);
     }
 
     public sealed override void OnInitializeMelon()
@@ -47,10 +45,18 @@ internal sealed class Mod : MelonMod
         foreach (MelonBase mb in MelonBase.RegisteredMelons)
         {
             if (mb is not GorillaMod gm) continue;
-            MelonInfoAttribute info = gm.Info;
-            MelonPreferences_Entry<bool> statePreference = _stateCategory.CreateEntry(info.Name, true, info.Name, null, false, false, null);
-            gm.Enabled = statePreference.Value;
-            gm._statePreference = statePreference;
+
+            try
+            {
+                MelonInfoAttribute info = gm.Info;
+                MelonPreferences_Entry<bool> statePreference = _stateCategory.CreateEntry(info.Name, true, info.Name, null, false, false, null);
+                gm._statePreference = statePreference;
+                gm.Enabled = statePreference.Value;
+            }
+            catch (Exception ex)
+            {
+                LoggerInstance.Error(ex);
+            }
         }
     }
 
@@ -72,6 +78,7 @@ internal sealed class Mod : MelonMod
         RigUtility.Initialize();
 
         PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
+        GorillaTagger.OnPlayerSpawned(Events.Game.OnGameInitialized.Invoke);
     }
 
     public override void OnUpdate()
