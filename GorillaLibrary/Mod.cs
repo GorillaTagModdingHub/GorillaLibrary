@@ -4,9 +4,11 @@ using GorillaLibrary.Patches;
 using GorillaLibrary.Utilities;
 using HarmonyLib;
 using MelonLoader;
+using MelonLoader.Utils;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -16,11 +18,13 @@ using System.Runtime.CompilerServices;
 
 namespace GorillaLibrary;
 
-internal class Mod : MelonMod
+internal sealed class Mod : MelonMod
 {
     internal static Action _unityAction;
 
-    public override void OnEarlyInitializeMelon()
+    private MelonPreferences_Category _stateCategory;
+
+    public sealed override void OnEarlyInitializeMelon()
     {
         RuntimeHelpers.RunClassConstructor(typeof(Events).TypeHandle);
 
@@ -30,9 +34,27 @@ internal class Mod : MelonMod
         {
             HarmonyInstance.Patch(method, postfix: new(AccessTools.Method(typeof(GameOverlayPatch), nameof(GameOverlayPatch.Postfix)), priority: HarmonyLib.Priority.First));
         }
+
+        GorillaTagger.OnPlayerSpawned(Events.Game.OnGameInitialized.Invoke);
     }
 
-    public override void OnLateInitializeMelon()
+    public sealed override void OnInitializeMelon()
+    {
+        string preferencePath = Path.Combine(MelonEnvironment.UserDataDirectory, "GorillaLibrary.cfg");
+        _stateCategory = MelonPreferences.CreateCategory("State", "State");
+        _stateCategory.SetFilePath(preferencePath);
+
+        foreach (MelonBase mb in MelonBase.RegisteredMelons)
+        {
+            if (mb is not GorillaMod gm) continue;
+            MelonInfoAttribute info = gm.Info;
+            MelonPreferences_Entry<bool> statePreference = _stateCategory.CreateEntry(info.Name, true, info.Name, null, false, false, null);
+            gm.Enabled = statePreference.Value;
+            gm._statePreference = statePreference;
+        }
+    }
+
+    public sealed override void OnLateInitializeMelon()
     {
         NetworkSystem.Instance.OnMultiplayerStarted += Events.Room.OnRoomJoined.Invoke;
         NetworkSystem.Instance.OnReturnedToSinglePlayer += Events.Room.OnRoomLeft.Invoke;
@@ -50,7 +72,6 @@ internal class Mod : MelonMod
         RigUtility.Initialize();
 
         PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
-        GorillaTagger.OnPlayerSpawned(Events.Game.OnGameInitialized.Invoke);
     }
 
     public override void OnUpdate()
@@ -59,13 +80,13 @@ internal class Mod : MelonMod
 
         if (_unityAction != null)
         {
-            foreach(Action action in _unityAction.GetInvocationList().Cast<Action>())
+            foreach (Action action in _unityAction.GetInvocationList().Cast<Action>())
             {
                 try
                 {
                     action.Invoke();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     LoggerInstance.Error(ex);
                 }

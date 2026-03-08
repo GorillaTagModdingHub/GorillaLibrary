@@ -1,5 +1,4 @@
 ﻿using GorillaGameModes;
-using GorillaLibrary.GameModes;
 using GorillaLibrary.GameModes.Models;
 using GorillaLibrary.GameModes.Utilities;
 using HarmonyLib;

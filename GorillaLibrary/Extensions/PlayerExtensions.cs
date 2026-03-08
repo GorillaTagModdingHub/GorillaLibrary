@@ -37,4 +37,9 @@ public static class PlayerExtensions
             callback?.Invoke(created);
         }, maxCacheTime).AccountInfo?.TitleInfo?.Created is DateTime created ? created : DateTime.MinValue;
     }
+
+    public static bool GetTutorialCompletion(this NetPlayer player)
+    {
+        return NetworkSystem.Instance.GetPlayerTutorialCompletion(player.ActorNumber);
+    }
 }

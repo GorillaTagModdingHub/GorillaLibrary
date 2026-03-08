@@ -21,7 +21,7 @@ public static class ThreadUtility
             {
                 action.Invoke();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Melon<Mod>.Logger.Error(ex);
             }

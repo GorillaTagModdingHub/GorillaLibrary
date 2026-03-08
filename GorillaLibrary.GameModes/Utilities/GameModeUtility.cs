@@ -1,8 +1,10 @@
 ﻿using GorillaGameModes;
 using GorillaLibrary.GameModes.Behaviours;
+using GorillaLibrary.GameModes.Extensions;
 using GorillaLibrary.GameModes.Models;
 using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
@@ -35,7 +37,7 @@ public static class GameModeUtility
 
     public static string GetGameModeName(GameModeType gameModeType)
     {
-        string modeName = (GetGameModeInstance(gameModeType) is GorillaGameManager gameManager) ? gameManager.GameModeName() : (string)(AccessTools.Method(GameMode.GameModeZoneMapping.GetType(), "GetModeName").Invoke(GameMode.GameModeZoneMapping, [gameModeType]));
+        string modeName = (GetGameModeInstance(gameModeType) is GorillaGameManager gameManager) ? gameManager.GameModeName() : (string)AccessTools.Method(GameMode.GameModeZoneMapping.GetType(), "GetModeName").Invoke(GameMode.GameModeZoneMapping, [gameModeType]);
         return (modeName.ToLower() == gameModeType.GetName().ToLower()) ? gameModeType.GetName() : CultureInfo.InvariantCulture.TextInfo.ToTitleCase(modeName.ToLower());
     }
 
@@ -46,5 +48,18 @@ public static class GameModeUtility
         return null;
     }
 
-    public static bool IsSuperGameMode(this GameModeType gameMode) => gameMode == GameModeType.SuperInfect || gameMode == GameModeType.SuperCasual;
+    public static bool IsSuperGameMode(this GameModeType gameMode)
+    {
+        return Enum.IsDefined(typeof(GameModeType), (int)gameMode) && gameMode.GetName().ToLower().StartsWith("super");
+    }
+
+    public static IEnumerable<NetPlayer> GetTaggedPlayers(GorillaGameManager gameManager)
+    {
+        return NetworkSystem.Instance.InRoom ? NetworkSystem.Instance.AllNetPlayers.Where(player => player.IsTagged(gameManager)) : [];
+    }
+
+    public static IEnumerable<NetPlayer> GetParticipants()
+    {
+        return NetworkSystem.Instance.InRoom ? NetworkSystem.Instance.AllNetPlayers.Where(player => player.IsParticipant()) : [];
+    }
 }
