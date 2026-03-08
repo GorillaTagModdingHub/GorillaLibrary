@@ -1,4 +1,5 @@
-﻿using MelonLoader;
+﻿using HarmonyLib;
+using MelonLoader;
 using MelonLoader.Utils;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,11 +22,25 @@ public class GorillaMod : MelonMod
         }
     }
 
+    public bool IsStateSupported
+    {
+        get
+        {
+            if (!_stateSupported.HasValue)
+            {
+                List<string> instanceMethods = AccessTools.GetMethodNames(this);
+                _stateSupported = instanceMethods.Contains("OnEnable") || instanceMethods.Contains("OnDisable");
+            }
+
+            return _stateSupported.Value;
+        }
+    }
+
     public ReadOnlyCollection<MelonPreferences_Category> Categories => new(_categories);
 
     private readonly List<MelonPreferences_Category> _categories = [];
 
-    private bool? _enabled;
+    private bool? _enabled, _stateSupported;
 
     internal MelonPreferences_Entry<bool> _statePreference;
 
