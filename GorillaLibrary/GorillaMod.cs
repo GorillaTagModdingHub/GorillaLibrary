@@ -29,7 +29,7 @@ public class GorillaMod : MelonMod
             if (!_stateSupported.HasValue)
             {
                 List<string> instanceMethods = AccessTools.GetMethodNames(this);
-                _stateSupported = instanceMethods.Contains("OnEnable") || instanceMethods.Contains("OnDisable");
+                _stateSupported = instanceMethods.Contains("OnMelonEnabled") || instanceMethods.Contains("OnMelonDisabled");
             }
 
             return _stateSupported.Value;
