@@ -2,5 +2,5 @@
 
 public class Constants
 {
-    public const string ModdedPrefix = "Mod_";
+    public const string ModdedPrefix = "MODDED_";
 }
