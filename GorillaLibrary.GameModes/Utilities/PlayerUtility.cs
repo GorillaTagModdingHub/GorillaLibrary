@@ -22,6 +22,6 @@ public static class PlayerUtility
 
     public static bool IsParticipant(NetPlayer player)
     {
-        return (bool)AccessTools.Method(typeof(GameMode), "CanParticipate").Invoke(player, null);
+        return (bool)AccessTools.Method(typeof(GameMode), "CanParticipate").Invoke(null, [player]);
     }
 }
