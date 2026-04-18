@@ -9,7 +9,7 @@ using System;
 using System.Reflection;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(Mod), "GorillaLibrary.GameModes", "1.0.0", "dev9998")]
+[assembly: MelonInfo(typeof(Mod), "GorillaLibrary.GameModes", "1.0.1", "dev9998")]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
 [assembly: MelonAdditionalDependencies("GorillaLibrary")]
 
