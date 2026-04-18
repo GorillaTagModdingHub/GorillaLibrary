@@ -6,7 +6,7 @@ using MelonLoader;
 
 namespace GorillaLibrary.GameModes.Patches;
 
-[HarmonyPatch(typeof(GameMode), "FindGameModeInString")]
+[HarmonyPatch(typeof(GameMode), "FindGameModeInPropertyString")]
 internal class GameModeSearchPatch
 {
     public static bool Prefix(string gmString, ref string __result)
@@ -17,7 +17,7 @@ internal class GameModeSearchPatch
             return false;
         }
 
-        Melon<Mod>.Logger.Error("NOT GOOD");
+        Melon<Mod>.Logger.Error($"Gamemode could not be found in string: {gmString}");
         return true;
     }
 }
