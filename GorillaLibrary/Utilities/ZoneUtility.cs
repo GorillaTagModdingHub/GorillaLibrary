@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System.Reflection;
 
 namespace GorillaLibrary.Utilities;
 
@@ -20,5 +21,12 @@ public static class ZoneUtility
             ZoneManagement instance = ZoneManagement;
             return (ZoneData[])AccessTools.Field(typeof(ZoneManagement), "zones").GetValue(instance);
         }
+    }
+
+    public static ZoneData GetZoneData(GTZone zone)
+    {
+        ZoneManagement instance = ZoneManagement;
+        MethodInfo method = AccessTools.Method(typeof(ZoneManagement), "GetZoneData");
+        return (ZoneData)method.Invoke(instance, [zone]);
     }
 }

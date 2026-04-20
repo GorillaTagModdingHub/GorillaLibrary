@@ -2,8 +2,6 @@
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
   </Folder>
-  <Project Path="GorillaLibrary.Content/GorillaLibrary.Content.csproj" Id="2039ed51-a33e-478c-b063-9e36d50b4086" />
-  <Project Path="GorillaLibrary.GameModes/GorillaLibrary.GameModes.csproj" />
   <Project Path="GorillaLibrary/GorillaLibrary.csproj" />
 </Solution>
 

@@ -17,7 +17,7 @@ public static class PlayerExtensions
         string nickName = netPlayer.NickName;
         string defaultName = netPlayer.DefaultName;
 
-        string playerName = isNamePermissionEnabled ? ((string.IsNullOrEmpty(nickName) || string.IsNullOrWhiteSpace(nickName)) ? defaultName : nickName) : defaultName;
+        string playerName = isNamePermissionEnabled ? string.IsNullOrEmpty(nickName) || string.IsNullOrWhiteSpace(nickName) ? defaultName : nickName : defaultName;
         return limitLength ? playerName.LimitLength(12) : playerName;
     }
 
@@ -41,5 +41,27 @@ public static class PlayerExtensions
     public static bool GetTutorialCompletion(this NetPlayer player)
     {
         return NetworkSystem.Instance.GetPlayerTutorialCompletion(player.ActorNumber);
+    }
+
+    public static bool IsTagged(this NetPlayer player)
+    {
+        GorillaGameManager gameManager = GorillaGameManager.instance;
+        return gameManager != null && player.IsTagged(gameManager);
+    }
+
+    public static bool IsTagged(this NetPlayer player, GorillaGameManager gameManager)
+    {
+        if (gameManager is GorillaHuntManager huntManager)
+            return PlayerUtility.IsTagged(player, huntManager);
+
+        if (gameManager is GorillaTagManager tagManager)
+            return tagManager.isCurrentlyTag ? PlayerUtility.IsTagger(player, tagManager) : PlayerUtility.IsTagged(player, tagManager);
+
+        return false;
+    }
+
+    public static bool IsParticipant(this NetPlayer player)
+    {
+        return PlayerUtility.IsParticipant(player);
     }
 }

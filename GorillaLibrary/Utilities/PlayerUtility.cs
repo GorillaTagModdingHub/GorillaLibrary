@@ -1,4 +1,6 @@
-﻿using MelonLoader;
+﻿using GorillaGameModes;
+using HarmonyLib;
+using MelonLoader;
 using PlayFab;
 using PlayFab.ClientModels;
 using System;
@@ -48,5 +50,25 @@ public static class PlayerUtility
         if (result != null) completionSource.SetResult(result);
 
         return completionSource.Task;
+    }
+
+    public static bool IsTagged(NetPlayer player, GorillaTagManager tagManager)
+    {
+        return tagManager.currentInfected?.Contains(player) ?? false;
+    }
+
+    public static bool IsTagger(NetPlayer player, GorillaTagManager tagManager)
+    {
+        return tagManager.currentIt == player;
+    }
+
+    public static bool IsTagged(NetPlayer player, GorillaHuntManager huntManager)
+    {
+        return huntManager.currentHunted?.Contains(player) ?? false;
+    }
+
+    public static bool IsParticipant(NetPlayer player)
+    {
+        return (bool)AccessTools.Method(typeof(GameMode), "CanParticipate").Invoke(null, [player]);
     }
 }
