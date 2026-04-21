@@ -89,7 +89,7 @@ public static class InputUtility
 
         public void Update()
         {
-            if (GameUtility.IsSteam)
+            if (CoreUtility.IsSteam)
             {
                 leftControllerStickButton = SteamVR_Actions.gorillaTag_LeftJoystickClick.state;
                 rightControllerStickButton = SteamVR_Actions.gorillaTag_RightJoystickClick.state;

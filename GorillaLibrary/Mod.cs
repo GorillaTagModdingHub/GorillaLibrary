@@ -87,7 +87,7 @@ internal sealed class Mod : MelonMod
             Events.Zone.OnZonesChanged.Invoke(activeZones);
         };
 
-        GameUtility.Initialize();
+        CoreUtility.Initialize();
         InputUtility.Initialize();
         RigUtility.Initialize();
 
