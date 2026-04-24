@@ -28,9 +28,9 @@ namespace GorillaLibrary.Patches
 
             if (!Enum.IsDefined(typeof(GameModeType), currentGameMode))
             {
-                if (GameModeUtility.FindGameModeFromId(currentGameMode) is Models.GameModeWrapper gamemode && gamemode.BaseGamemode.HasValue && gamemode.BaseGamemode.Value < GameModeType.Count)
+                if (GameModeUtility.FindGameModeFromId(currentGameMode) is Models.GameModeWrapper gamemode && gamemode.BaseGameMode.HasValue && gamemode.BaseGameMode.Value < GameModeType.Count)
                 {
-                    GameModeType gameModeType = gamemode.BaseGamemode.Value;
+                    GameModeType gameModeType = gamemode.BaseGameMode.Value;
 
                     GameModeType verifiedGameMode = (GameModeType)AccessTools.Method(GorillaGameModes.GameMode.GameModeZoneMapping.GetType(), "VerifyModeForZone").Invoke(GorillaGameModes.GameMode.GameModeZoneMapping, [__instance.zone, gameModeType, NetworkSystem.Instance.SessionIsPrivate]);
                     if (verifiedGameMode == gameModeType)

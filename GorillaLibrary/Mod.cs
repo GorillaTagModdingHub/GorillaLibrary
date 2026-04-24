@@ -29,10 +29,9 @@ internal sealed class Mod : MelonMod
 
     public sealed override void OnEarlyInitializeMelon()
     {
-        Events.Core.OnGameInitialized.Subscribe(OnGameInitialized);
-
         RuntimeHelpers.RunClassConstructor(typeof(Events).TypeHandle);
 
+        Events.Core.OnGameInitialized.Subscribe(OnGameInitialized);
         MothershipClientApiUnity.OnMessageNotificationSocket += (notif, _) => Events.Server.OnMothershipMessageRecieved.Invoke(notif.Title, notif.Body);
 
         if (AccessTools.Method(typeof(GorillaTagger), "OnGameOverlayActivated") is MethodInfo method)

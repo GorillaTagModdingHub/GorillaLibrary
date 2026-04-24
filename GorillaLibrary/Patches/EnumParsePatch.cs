@@ -20,7 +20,7 @@ internal class EnumParsePatch
     {
         if (GameModeUtility.FindGameModeFromId(value) is Models.GameModeWrapper gamemode)
         {
-            __result = gamemode.BaseGamemode.GetValueOrDefault(GameModeType.Infection);
+            __result = gamemode.BaseGameMode.GetValueOrDefault(GameModeType.Infection);
             return false;
         }
 

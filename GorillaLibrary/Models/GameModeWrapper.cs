@@ -20,16 +20,25 @@ public class GameModeWrapper
     /// <summary>
     /// An optional reference of a game mode to inherit
     /// </summary>
-    public GameModeType? BaseGamemode { get; }
+    public GameModeType? BaseGameMode { get; }
 
     /// <summary>
     /// An optional reference of a game mode manager to create
     /// </summary>
     public Type GameManager { get; }
 
+    public string GameModeName
+    {
+        get
+        {
+            GameModeType? baseGameMode = BaseGameMode;
+            return baseGameMode.HasValue ? baseGameMode.ToString() : ID;
+        }
+    }
+
     internal GameModeWrapper(GameModeType gameModeType)
     {
-        BaseGamemode = gameModeType;
+        BaseGameMode = gameModeType;
 
         ID = gameModeType.ToString();
         DisplayName = GameModeUtility.GetGameModeName(gameModeType);
@@ -39,7 +48,7 @@ public class GameModeWrapper
 
     public GameModeWrapper(string id, string displayName, GameModeType? game_mode_type = null)
     {
-        BaseGamemode = game_mode_type;
+        BaseGameMode = game_mode_type;
 
         ID = game_mode_type.HasValue && !id.Contains(game_mode_type.Value.ToString()) ? string.Concat(id, game_mode_type) : id;
         DisplayName = displayName;

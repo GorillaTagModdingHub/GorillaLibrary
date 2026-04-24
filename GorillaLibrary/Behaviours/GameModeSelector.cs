@@ -135,8 +135,8 @@ namespace GorillaLibrary.Behaviours
             bool superModeState = superToggleButton.isOn;
 
             List<Models.GameModeWrapper> finalGameModeList = [.. superModeState
-                ? gameModeList.Where(gameMode => !gameMode.BaseGamemode.HasValue || gameMode.BaseGamemode.Value != GameModeType.Casual && gameMode.BaseGamemode.Value != GameModeType.Infection)
-                : gameModeList.Where(gameMode => !gameMode.BaseGamemode.HasValue || gameMode.BaseGamemode.Value != GameModeType.SuperCasual && gameMode.BaseGamemode.Value != GameModeType.SuperInfect)
+                ? gameModeList.Where(gameMode => !gameMode.BaseGameMode.HasValue || gameMode.BaseGameMode.Value != GameModeType.Casual && gameMode.BaseGameMode.Value != GameModeType.Infection)
+                : gameModeList.Where(gameMode => !gameMode.BaseGameMode.HasValue || gameMode.BaseGameMode.Value != GameModeType.SuperCasual && gameMode.BaseGameMode.Value != GameModeType.SuperInfect)
             ];
 
             if (SelectorGameModes.TryAdd(sessionIsPrivate, finalGameModeList))

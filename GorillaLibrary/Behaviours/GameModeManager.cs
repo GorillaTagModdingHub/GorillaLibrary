@@ -47,10 +47,10 @@ internal class GameModeManager : MonoBehaviour
         }
         Instance = this;
 
-        gameModeTable = (Dictionary<int, GorillaGameManager>)AccessTools.Field(typeof(GorillaGameModes.GameMode), "gameModeTable").GetValue(null);
+        gameModeTable = (Dictionary<int, GorillaGameManager>)AccessTools.Field(typeof(GameMode), "gameModeTable").GetValue(null);
 
         customGameModeContainer = new GameObject("Utilla Custom Game Modes");
-        customGameModeContainer.transform.SetParent(((GorillaGameModes.GameMode)AccessTools.Field(typeof(GorillaGameModes.GameMode), "instance").GetValue(null)).gameObject.transform);
+        customGameModeContainer.transform.SetParent(((GameMode)AccessTools.Field(typeof(GameMode), "instance").GetValue(null)).gameObject.transform);
 
         string currentGameMode = PlayerPrefs.GetString(GorillaComputerPatches.ModePreferenceKey, GameModeType.Infection.ToString());
         GorillaComputer.instance.currentGameMode.Value = currentGameMode;
@@ -187,15 +187,15 @@ internal class GameModeManager : MonoBehaviour
 
     void AddGamemodeToPrefabPool(GameModeWrapper gamemode)
     {
-        if (GorillaGameModes.GameMode.gameModeKeyByName.ContainsKey(gamemode.ID))
+        if (GameMode.gameModeKeyByName.ContainsKey(gamemode.ID))
         {
             Melon<Mod>.Logger.Warning($"Game Mode already exists: has ID {gamemode.ID}");
             return;
         }
 
-        if (gamemode.BaseGamemode.HasValue && gamemode.ID != gamemode.BaseGamemode.Value.GetName())
+        if (gamemode.BaseGameMode.HasValue && gamemode.ID != gamemode.BaseGameMode.Value.GetName())
         {
-            GorillaGameModes.GameMode.gameModeKeyByName.Add(gamemode.ID, GorillaGameModes.GameMode.gameModeKeyByName[gamemode.BaseGamemode.Value.GetName()]);
+            GameMode.gameModeKeyByName.Add(gamemode.ID, GameMode.gameModeKeyByName[gamemode.BaseGameMode.Value.GetName()]);
             return;
         }
 
@@ -205,7 +205,7 @@ internal class GameModeManager : MonoBehaviour
 
         if (gmType is null || !gmType.IsSubclassOf(typeof(GorillaGameManager)))
         {
-            GameModeType? gmKey = gamemode.BaseGamemode;
+            GameModeType? gmKey = gamemode.BaseGameMode;
 
             if (gmKey == null)
             {
@@ -213,9 +213,9 @@ internal class GameModeManager : MonoBehaviour
                 return;
             }
 
-            GorillaGameModes.GameMode.gameModeKeyByName[gamemode.ID] = (int)gmKey;
+            GameMode.gameModeKeyByName[gamemode.ID] = (int)gmKey;
             //GameMode.gameModeKeyByName[gamemode.DisplayName] = (int)gmKey;
-            GorillaGameModes.GameMode.gameModeNames.Add(gamemode.ID);
+            GameMode.gameModeNames.Add(gamemode.ID);
             return;
         }
 
@@ -233,9 +233,9 @@ internal class GameModeManager : MonoBehaviour
         }
 
         gameModeTable[gameModeKey] = gameMode;
-        GorillaGameModes.GameMode.gameModeKeyByName[gamemode.ID] = gameModeKey;
-        GorillaGameModes.GameMode.gameModeNames.Add(gamemode.ID);
-        GorillaGameModes.GameMode.gameModes.Add(gameMode);
+        GameMode.gameModeKeyByName[gamemode.ID] = gameModeKey;
+        GameMode.gameModeNames.Add(gamemode.ID);
+        GameMode.gameModes.Add(gameMode);
 
         prefab.transform.SetParent(customGameModeContainer.transform);
         prefab.SetActive(true);

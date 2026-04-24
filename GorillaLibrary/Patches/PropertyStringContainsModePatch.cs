@@ -17,7 +17,7 @@ internal class PropertyStringContainsModePatch
             string[] split = propertyString.Split(separator);
             bool useSeperator = split.Length > 2;
             GameModeWrapper wrapper = useSeperator ? GameModeUtility.FindGameModeFromId(split[2]) : null;
-            __result = wrapper != null && (wrapper.BaseGamemode.HasValue ? gameMode == wrapper.BaseGamemode.ToString() : gameMode == wrapper.ID);
+            __result = wrapper != null && wrapper.GameModeName == gameMode;
             return false;
         }
 
