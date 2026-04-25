@@ -3,6 +3,7 @@ using GorillaLibrary.Utilities;
 using GorillaTag;
 using MelonLoader;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -315,8 +316,7 @@ internal class ConductBoardManager : MonoBehaviour
 
     public async Task DownloadEntries()
     {
-        /*
-        using UnityWebRequest webRequest = UnityWebRequest.Get(string.Join('/', Constants.InfoRepositoryURL, "ConductBoard", "Entries.json"));
+        using UnityWebRequest webRequest = UnityWebRequest.Get(@"https://raw.githubusercontent.com/GorillaTagModdingHub/GorillaLibrary/refs/heads/main/Data/Entries.json");
         UnityWebRequestAsyncOperation asyncOperation = webRequest.SendWebRequest();
         await asyncOperation;
 
@@ -324,16 +324,16 @@ internal class ConductBoardManager : MonoBehaviour
         {
             foreach (JObject item in JArray.Parse(webRequest.downloadHandler.text).Cast<JObject>())
             {
-                Logging.Message(item.ToString(Formatting.Indented));
+                // Logging.Message(item.ToString(Formatting.Indented));
 
-                using UnityWebRequest webRequest2 = UnityWebRequest.Get(string.Join('/', Constants.InfoRepositoryURL, (string)item.Property("body").Value));
+                using UnityWebRequest webRequest2 = UnityWebRequest.Get(string.Concat(@"https://raw.githubusercontent.com/GorillaTagModdingHub/GorillaLibrary/refs/heads/main/Data/", (string)item.Property("body").Value));
                 asyncOperation = webRequest2.SendWebRequest();
                 await asyncOperation;
 
                 if (webRequest2.result != UnityWebRequest.Result.Success)
                 {
-                    Logging.Fatal($"Body text could not be accessed from {webRequest2.url}");
-                    Logging.Error(webRequest.downloadHandler.error);
+                    // Logging.Fatal($"Body text could not be accessed from {webRequest2.url}");
+                    // Logging.Error(webRequest.downloadHandler.error);
                     continue;
                 }
 
@@ -345,9 +345,6 @@ internal class ConductBoardManager : MonoBehaviour
             // Logging.Fatal($"ModData could not be accessed from {webRequest.url}");
             // Logging.Info(webRequest.downloadHandler.error);
         }
-        */
-
-        
     }
 
     private IEnumerator ButtonColourUpdate(GorillaPressableButton pressableButton)
