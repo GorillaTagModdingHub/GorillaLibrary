@@ -1,5 +1,7 @@
-﻿using HarmonyLib;
+﻿using GorillaLibrary.Extensions;
+using HarmonyLib;
 using System.Reflection;
+using UnityEngine;
 
 namespace GorillaLibrary.Utilities;
 
@@ -22,6 +24,8 @@ public static class ZoneUtility
             return (ZoneData[])AccessTools.Field(typeof(ZoneManagement), "zones").GetValue(instance);
         }
     }
+
+    public static GameObject[] Objects => ZoneManagement.GetField<GameObject[]>("allObjects");
 
     public static ZoneData GetZoneData(GTZone zone)
     {

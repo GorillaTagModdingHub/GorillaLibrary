@@ -118,7 +118,7 @@ internal sealed class Mod : MelonMod
 
     private void OnGameInitialized()
     {
-        UnityEngine.Object.DontDestroyOnLoad(new GameObject("GorillaLibrary", typeof(NetworkController), typeof(GameModeManager)));
+        UnityEngine.Object.DontDestroyOnLoad(new GameObject("GorillaLibrary", typeof(NetworkController), typeof(GameModeManager), typeof(ConductBoardManager)));
     }
 
     private void OnEvent(EventData data)
