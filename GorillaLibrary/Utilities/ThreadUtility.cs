@@ -8,7 +8,7 @@ public static class ThreadUtility
 {
     public static void StartSyncMethod(Action action)
     {
-        Mod._unityAction = (Action)Delegate.Combine(Mod._unityAction, action);
+        Melon<Mod>.Instance.unityAction = (Action)Delegate.Combine(Melon<Mod>.Instance.unityAction, action);
     }
 
     public static void StartAsyncMethod(Action action)

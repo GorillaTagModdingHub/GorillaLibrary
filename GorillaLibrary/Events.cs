@@ -20,4 +20,6 @@ public class Events
     public static readonly ZoneEvents Zone = new();
 
     public static readonly GameModeEvents GameMode = new();
+
+    public static readonly CosmeticEvents Cosmetics = new();
 }

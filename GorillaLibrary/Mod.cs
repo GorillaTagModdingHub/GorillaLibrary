@@ -1,5 +1,6 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaLibrary;
+using GorillaLibrary.Attributes;
 using GorillaLibrary.Behaviours;
 using GorillaLibrary.Patches;
 using GorillaLibrary.Utilities;
@@ -18,14 +19,19 @@ using UnityEngine;
 [assembly: MelonInfo(typeof(Mod), "GorillaLibrary", "1.0.2", "dev9998")]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
 [assembly: MelonIncompatibleAssemblies("GorillaLibrary.GameModes", "GorillaLibrary.Content")]
+[assembly: WardrobeCategory("Outfits", typeof(OutfitSection))]
 
 namespace GorillaLibrary;
 
 internal sealed class Mod : MelonMod
 {
-    internal static Action _unityAction;
+    internal Action unityAction;
+
+    internal List<WardrobeCategoryAttribute> wardrobeCategories;
 
     private MelonPreferences_Category _stateCategory;
+
+    private GameObject sharedObject;
 
     public sealed override void OnEarlyInitializeMelon()
     {
@@ -91,6 +97,33 @@ internal sealed class Mod : MelonMod
         RigUtility.Initialize();
 
         PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
+
+        wardrobeCategories = [];
+
+        foreach (var melonBase in MelonBase.RegisteredMelons)
+        {
+            var assembly = melonBase.GetType().Assembly;
+
+            assembly.GetCustomAttributes().ForEach(attribute =>
+            {
+                if (attribute is WardrobeCategoryAttribute category)
+                {
+                    wardrobeCategories.Add(category);
+                }
+            });
+        }
+
+        sharedObject = new GameObject("GorillaLibrary");
+        UnityEngine.Object.DontDestroyOnLoad(sharedObject);
+
+        wardrobeCategories.ForEach(category =>
+        {
+            var types = category.SectionTypes?.Where(type => typeof(WardrobeSection).IsAssignableFrom(type));
+            var list = new List<WardrobeSection>();
+            types.ForEach(type => list.Add((WardrobeSection)sharedObject.AddComponent(type)));
+            category.sections = list;
+        });
+
         GorillaTagger.OnPlayerSpawned(Events.Core.OnGameInitialized.Invoke);
     }
 
@@ -98,9 +131,9 @@ internal sealed class Mod : MelonMod
     {
         InputUtility.Update();
 
-        if (_unityAction != null)
+        if (unityAction != null)
         {
-            foreach (Action action in _unityAction.GetInvocationList().Cast<Action>())
+            foreach (Action action in unityAction.GetInvocationList().Cast<Action>())
             {
                 try
                 {
@@ -112,13 +145,15 @@ internal sealed class Mod : MelonMod
                 }
             }
 
-            _unityAction = null;
+            unityAction = null;
         }
     }
 
     private void OnGameInitialized()
     {
-        UnityEngine.Object.DontDestroyOnLoad(new GameObject("GorillaLibrary", typeof(NetworkController), typeof(GameModeManager), typeof(ConductBoardManager)));
+        sharedObject.AddComponent<NetworkController>();
+        sharedObject.AddComponent<GameModeManager>();
+        sharedObject.AddComponent<ConductBoardManager>();
     }
 
     private void OnEvent(EventData data)

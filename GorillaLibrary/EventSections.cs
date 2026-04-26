@@ -97,3 +97,8 @@ public class GameModeEvents
     /// </summary>
     public readonly MelonEvent<GorillaGameManager> OnRoundCompleted = new();
 }
+
+public class CosmeticEvents
+{
+    public readonly MelonEvent OnWornCosmeticsUpdated = new();
+}

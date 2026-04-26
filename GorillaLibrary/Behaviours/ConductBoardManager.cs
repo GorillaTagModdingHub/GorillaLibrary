@@ -36,7 +36,7 @@ internal class ConductBoardManager : MonoBehaviour
 
     private Dictionary<string, Supporter[]> _supporters;
 
-    private Dictionary<string, Color> _sponsorColours = new()
+    private readonly Dictionary<string, Color> _sponsorColours = new()
     {
         { "Basic", new Color32(255, 123, 121, 255) },
         { "Dweller", new Color32(255, 145, 144, 255) },
@@ -205,7 +205,7 @@ internal class ConductBoardManager : MonoBehaviour
             return;
         }
 
-        string version = JsonConvert.DeserializeObject<Dictionary<string, string>>(webRequest.downloadHandler.text)["tag_name"];
+        string version = (string)JsonConvert.DeserializeObject<Dictionary<string, object>>(webRequest.downloadHandler.text)["tag_name"];
         Melon<Mod>.Logger.Msg($"GorillaLibrary is on Version {version}");
 
         MelonInfoAttribute info = Melon<Mod>.Instance.Info;
@@ -221,48 +221,11 @@ internal class ConductBoardManager : MonoBehaviour
     {
         await DownloadEntries();
 
-        /*
-        foreach (var info in Chainloader.PluginInfos)
-        {
-            if (info.Value is null) continue;
-
-            BaseUnityPlugin plugin = info.Value.Instance;
-            if (plugin is null) continue;
-
-            Type type = plugin.GetType();
-            IEnumerable<ModdedBoardTextAttribute> attributes = type.GetCustomAttributes<ModdedBoardTextAttribute>();
-
-            if (attributes is not null)
-            {
-                var assembly = type.Assembly;
-                var names = assembly.GetManifestResourceNames();
-
-                foreach (ModdedBoardTextAttribute attribute in attributes)
-                {
-                    if (string.IsNullOrEmpty(attribute.Title) || string.IsNullOrWhiteSpace(attribute.Title) || string.IsNullOrEmpty(attribute.Text) || string.IsNullOrWhiteSpace(attribute.Text)) continue;
-
-                    if (names.SingleOrDefault(resourceName => resourceName == attribute.Text) is string resourceName)
-                    {
-                        using Stream stream = assembly.GetManifestResourceStream(resourceName);
-                        using StreamReader reader = new(stream);
-                        string resourceText = reader.ReadToEnd();
-                        boardContent.Add(new(attribute.Title, resourceText));
-                        continue;
-                    }
-
-                    boardContent.Add(new(attribute.Title, attribute.Text));
-                }
-            }
-        }
-        */
-
         Random random = new(Mathf.FloorToInt(DateTime.UtcNow.DayOfYear + DateTime.UtcNow.Year));
 
         using UnityWebRequest request = UnityWebRequest.Get("https://gworkers.soweli.uk/supporters");
         await request.SendWebRequest().AsAwaitable();
         _supporters = request.result == UnityWebRequest.Result.Success ? JsonConvert.DeserializeObject<Dictionary<string, Supporter[]>>(request.downloadHandler.text) : null;
-
-        Melon<Mod>.Logger.Msg("going thru tiers now");
 
         foreach (var (tier, supportersInTier) in _supporters)
         {
@@ -316,34 +279,19 @@ internal class ConductBoardManager : MonoBehaviour
 
     public async Task DownloadEntries()
     {
-        using UnityWebRequest webRequest = UnityWebRequest.Get(@"https://raw.githubusercontent.com/GorillaTagModdingHub/GorillaLibrary/refs/heads/main/Data/Entries.json");
-        UnityWebRequestAsyncOperation asyncOperation = webRequest.SendWebRequest();
-        await asyncOperation;
+        using UnityWebRequest entriesRequest = UnityWebRequest.Get(@"https://raw.githubusercontent.com/GorillaTagModdingHub/GorillaLibrary/refs/heads/main/Data/Entries.json");
+        await entriesRequest.SendWebRequest();
 
-        if (webRequest.result == UnityWebRequest.Result.Success)
+        if (entriesRequest.result == UnityWebRequest.Result.Success)
         {
-            foreach (JObject item in JArray.Parse(webRequest.downloadHandler.text).Cast<JObject>())
+            foreach (JObject item in JArray.Parse(entriesRequest.downloadHandler.text).Cast<JObject>())
             {
-                // Logging.Message(item.ToString(Formatting.Indented));
+                using UnityWebRequest entryBodyRequest = UnityWebRequest.Get(string.Concat(@"https://raw.githubusercontent.com/GorillaTagModdingHub/GorillaLibrary/refs/heads/main/Data/", (string)item.Property("body").Value));
+                await entryBodyRequest.SendWebRequest();
 
-                using UnityWebRequest webRequest2 = UnityWebRequest.Get(string.Concat(@"https://raw.githubusercontent.com/GorillaTagModdingHub/GorillaLibrary/refs/heads/main/Data/", (string)item.Property("body").Value));
-                asyncOperation = webRequest2.SendWebRequest();
-                await asyncOperation;
-
-                if (webRequest2.result != UnityWebRequest.Result.Success)
-                {
-                    // Logging.Fatal($"Body text could not be accessed from {webRequest2.url}");
-                    // Logging.Error(webRequest.downloadHandler.error);
-                    continue;
-                }
-
-                boardContent.Add(new((string)item.Property("title").Value, webRequest2.downloadHandler.text));
+                if (entryBodyRequest.result != UnityWebRequest.Result.Success) continue;
+                boardContent.Add(new((string)item.Property("title").Value, entryBodyRequest.downloadHandler.text));
             }
-        }
-        else
-        {
-            // Logging.Fatal($"ModData could not be accessed from {webRequest.url}");
-            // Logging.Info(webRequest.downloadHandler.error);
         }
     }
 
