@@ -91,6 +91,7 @@ internal class WardrobeController : MonoBehaviour
         layoutGroup.childForceExpandHeight = false;
         layoutGroup.childForceExpandWidth = false;
         layoutGroup.childAlignment = TextAnchor.MiddleCenter;
+        layoutGroup.reverseArrangement = true;
 
         List<CosmeticCategoryButton> buttons = [];
 
@@ -125,6 +126,7 @@ internal class WardrobeController : MonoBehaviour
                 newButton.myText = null;
                 newButton.myTmpText = null;
                 newButton.UpdateColor();
+                newButton.onPressed += OnCategorySelection;
 
                 buttonObject.transform.SetParent(buttonContainer.transform);
                 buttonObject.transform.localPosition = Vector3.zero;
@@ -186,7 +188,8 @@ internal class WardrobeController : MonoBehaviour
 
     public void UpdateCosmetics(WardrobeSection source)
     {
-        if (_currentCategory == null || section != source) return;
+        Melon<Mod>.Logger.Msg("section");
+        // if (section != source) return;
         OnCosmeticsUpdated();
     }
 
@@ -260,7 +263,7 @@ internal class WardrobeController : MonoBehaviour
         HandlePageNavigate();
     }
 
-    public void OnCategorySelection(GorillaPressableButton baseButton)
+    public void OnCategorySelection(GorillaPressableButton baseButton, bool isLeftHand)
     {
         for (int i = 0; i < _currentCategory.buttons.Count; i++)
         {
@@ -268,9 +271,30 @@ internal class WardrobeController : MonoBehaviour
 
             if (button == baseButton)
             {
+                var previousSection = _currentCategory.sections[_currentCategory.buttons.IndexOf(_currentCategory.selectedButton)];
+
                 _currentCategory.sections[i].OnSectionActivated(_currentCategory.selectedButton == button);
                 _currentCategory.selectedButton = button;
+
+                section = _currentCategory.sections[i];
+
+                if (previousSection != _currentCategory.sections[i])
+                {
+                    ReferenceWardrobe = _cosmeticWardrobe;
+
+                    for (int k = 0; k < _selectionArray.Length; k++)
+                    {
+                        CosmeticWardrobeSelection cosmeticWardrobeSelection = _selectionArray[k];
+                        section.ResetCosmetic(cosmeticWardrobeSelection);
+                    }
+
+                    ReferenceWardrobe = null;
+
+                    UpdateCosmeticDisplays();
+                }
+
                 UpdateCategoryButtons();
+
                 break;
             }
         }
@@ -322,7 +346,7 @@ internal class WardrobeController : MonoBehaviour
                     for (int i = 0; i < _selectionArray.Length; i++)
                     {
                         CosmeticWardrobeSelection cosmeticWardrobeSelection = _selectionArray[i];
-                        section.ResetCosmetic(cosmeticWardrobeSelection, section.startingDisplayIndex + i);
+                        section.ResetCosmetic(cosmeticWardrobeSelection);
                     }
 
                     ReferenceWardrobe = null;
@@ -350,7 +374,7 @@ internal class WardrobeController : MonoBehaviour
                 for (int i = 0; i < _selectionArray.Length; i++)
                 {
                     CosmeticWardrobeSelection cosmeticWardrobeSelection = _selectionArray[i];
-                    section.ResetCosmetic(cosmeticWardrobeSelection, section.startingDisplayIndex + i);
+                    section.ResetCosmetic(cosmeticWardrobeSelection);
                 }
 
                 ReferenceWardrobe = null;

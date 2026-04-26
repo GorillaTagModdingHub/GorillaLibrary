@@ -31,7 +31,7 @@ internal abstract class WardrobeSection : MonoBehaviour
 
     public abstract void ApplyCosmetic(CosmeticWardrobeSelection selection, int index);
 
-    public virtual void ResetCosmetic(CosmeticWardrobeSelection selection, int index)
+    public virtual void ResetCosmetic(CosmeticWardrobeSelection selection)
     {
 
     }

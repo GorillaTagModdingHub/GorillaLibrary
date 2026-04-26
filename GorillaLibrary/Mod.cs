@@ -19,7 +19,7 @@ using UnityEngine;
 [assembly: MelonInfo(typeof(Mod), "GorillaLibrary", "1.0.2", "dev9998")]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
 [assembly: MelonIncompatibleAssemblies("GorillaLibrary.GameModes", "GorillaLibrary.Content")]
-[assembly: WardrobeCategory("Outfits", typeof(OutfitSection))]
+[assembly: WardrobeCategory("Outfits", typeof(OutfitSection_Load), typeof(OutfitSection_Clone))]
 
 namespace GorillaLibrary;
 

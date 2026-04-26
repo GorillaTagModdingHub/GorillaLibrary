@@ -1,15 +1,17 @@
 ﻿using GorillaLibrary.Extensions;
 using GorillaNetworking;
 using HarmonyLib;
+using System;
 using System.Linq;
+using UnityEngine;
 using static CosmeticWardrobe;
 using static GorillaNetworking.CosmeticsController;
 
 namespace GorillaLibrary.Behaviours;
 
-internal class OutfitSection : WardrobeSection
+internal class OutfitSection_Clone : WardrobeSection
 {
-    public override string Title => "Load";
+    public override string Title => "Clone";
 
     public void Awake()
     {
@@ -29,7 +31,16 @@ internal class OutfitSection : WardrobeSection
 
     public override void SelectCosmetic(int index)
     {
+        var outfits = instance.GetField<CosmeticSet[]>("savedOutfits");
+        outfits[index].CopyItems(instance.currentWornSet);
+
+        var colours = instance.GetField<Vector3[]>("savedColors");
+        colours[index] = new Vector3(VRRig.LocalRig.playerColor.r, VRRig.LocalRig.playerColor.g, VRRig.LocalRig.playerColor.b);
+
+        instance.SetField("selectedOutfit", SelectedOutfit);
         instance.LoadSavedOutfit(index);
+
+        UpdateCosmetics();
     }
 
     public override int GetSectionSize()
@@ -41,7 +52,20 @@ internal class OutfitSection : WardrobeSection
     {
         if (hasActivated)
         {
-            instance.InvokeMethod("ClearOutfits");
+            int size = GetSectionSize();
+
+            for (int i = 0; i < size; i++)
+            {
+                var outfits = instance.GetField<CosmeticSet[]>("savedOutfits");
+                outfits[i].CopyItems(instance.currentWornSet);
+
+                var colours = instance.GetField<Vector3[]>("savedColors");
+                colours[i] = new Vector3(VRRig.LocalRig.playerColor.r, VRRig.LocalRig.playerColor.g, VRRig.LocalRig.playerColor.b);
+            }
+
+            instance.SetField("selectedOutfit", SelectedOutfit == 0 ? 1 : 0);
+            instance.LoadSavedOutfit(0);
+
             UpdateCosmetics();
         }
     }
