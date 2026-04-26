@@ -258,6 +258,8 @@ internal class ConductBoardManager : MonoBehaviour
 
             for (int i = 0; i < 5; i++)
             {
+                if (i >= supportersInTier.Length) break;
+
                 int realIndex = random.Next() % supporterIndicies.Count;
                 int index = supporterIndicies[realIndex];
                 Supporter supporter = supportersInTier[index];
