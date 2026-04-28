@@ -11,7 +11,7 @@ using static CosmeticWardrobe;
 
 namespace GorillaLibrary.Behaviours;
 
-internal class WardrobeController : MonoBehaviour
+public class WardrobeController : MonoBehaviour
 {
     public static CosmeticWardrobe ReferenceWardrobe;
 
@@ -41,7 +41,7 @@ internal class WardrobeController : MonoBehaviour
 
     private readonly Dictionary<WardrobeSection, Tuple<Sprite, Sprite, Sprite>> icons = [];
 
-    public void Awake()
+    internal void Awake()
     {
         Events.Core.OnGameInitialized.Subscribe(Initialize);
     }
@@ -186,19 +186,19 @@ internal class WardrobeController : MonoBehaviour
         WardrobeSection.SetIconRequest.Subscribe(SetIcons);
     }
 
-    public void UpdateCosmetics(WardrobeSection source)
+    internal void UpdateCosmetics(WardrobeSection source)
     {
         Melon<Mod>.Logger.Msg("section");
         // if (section != source) return;
         OnCosmeticsUpdated();
     }
 
-    public void OnCosmeticsUpdated()
+    internal void OnCosmeticsUpdated()
     {
         UpdateCosmeticDisplays();
     }
 
-    public void SetIcons(WardrobeSection source, Tuple<Sprite, Sprite, Sprite> tuple)
+    internal void SetIcons(WardrobeSection source, Tuple<Sprite, Sprite, Sprite> tuple)
     {
         if (icons.ContainsKey(source)) icons[source] = tuple;
         else icons.Add(source, tuple);
@@ -206,7 +206,7 @@ internal class WardrobeController : MonoBehaviour
         UpdateCategoryButtons();
     }
 
-    public void OnSelectionNavigateNext()
+    internal void OnSelectionNavigateNext()
     {
         section.startingDisplayIndex++;
         int size = section.GetSectionSize();
@@ -215,7 +215,7 @@ internal class WardrobeController : MonoBehaviour
         UpdateCosmeticDisplays();
     }
 
-    public void OnSelectionNavigatePrev()
+    internal void OnSelectionNavigatePrev()
     {
         section.startingDisplayIndex--;
 
@@ -236,7 +236,7 @@ internal class WardrobeController : MonoBehaviour
         UpdateCosmeticDisplays();
     }
 
-    public void OnCosmeticSelection(GorillaPressableButton button)
+    internal void OnCosmeticSelection(GorillaPressableButton button)
     {
         for (int i = 0; i < _selectionArray.Length; i++)
         {
@@ -249,21 +249,21 @@ internal class WardrobeController : MonoBehaviour
         UpdateCosmeticDisplays();
     }
 
-    public void OnPageNavigateNext()
+    internal void OnPageNavigateNext()
     {
         _categoryIndex++;
         if (_categoryIndex >= _categories.Count) _categoryIndex = 0;
         HandlePageNavigate();
     }
 
-    public void OnPageNavigatePrev()
+    internal void OnPageNavigatePrev()
     {
         _categoryIndex--;
         if (_categoryIndex < 0) _categoryIndex = _categories.Count - 1;
         HandlePageNavigate();
     }
 
-    public void OnCategorySelection(GorillaPressableButton baseButton, bool isLeftHand)
+    internal void OnCategorySelection(GorillaPressableButton baseButton, bool isLeftHand)
     {
         for (int i = 0; i < _currentCategory.buttons.Count; i++)
         {
@@ -300,7 +300,7 @@ internal class WardrobeController : MonoBehaviour
         }
     }
 
-    private void UpdateCategoryButtons()
+    internal void UpdateCategoryButtons()
     {
         for (int i = 0; i < _currentCategory.buttons.Count; i++)
         {
@@ -319,7 +319,7 @@ internal class WardrobeController : MonoBehaviour
         }
     }
 
-    private void HandlePageNavigate()
+    internal void HandlePageNavigate()
     {
         var previousCategory = _currentCategory;
         _currentCategory = _categories[_categoryIndex];
@@ -413,9 +413,16 @@ internal class WardrobeController : MonoBehaviour
         prevSelection.UpdateColor();
     }
 
-    public void OnOutfitTextUpdate()
+    internal void OnOutfitTextUpdate()
     {
-        _outfitText.text = (UseCustomCategory ? _currentCategory.Title : "Base Wardrobe").ToUpper();
+        try
+        {
+            _outfitText.text = (UseCustomCategory ? _currentCategory?.Title : "Base Wardrobe")?.ToUpper();
+        }
+        catch
+        {
+
+        }
         _nextOutfit.enabled = true;
         _nextOutfit.UpdateColor();
         _previousOutfit.enabled = true;

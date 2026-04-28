@@ -5,7 +5,7 @@ using static CosmeticWardrobe;
 
 namespace GorillaLibrary.Behaviours;
 
-internal abstract class WardrobeSection : MonoBehaviour
+public abstract class WardrobeSection : MonoBehaviour
 {
     public abstract string Title { get; }
 
