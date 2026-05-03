@@ -20,6 +20,8 @@ namespace GorillaLibrary.Behaviours;
 
 internal class ConductBoardManager : MonoBehaviour
 {
+    public static ConductBoardManager Instance { get; private set; }
+    
     private int PageCount => boardContent.Count;
 
     private readonly List<Section> boardContent = [];
