@@ -23,6 +23,10 @@ internal class ConductBoardManager : MonoBehaviour
     private int PageCount => boardContent.Count;
 
     private readonly List<Section> boardContent = [];
+    
+    private readonly Queue<Section> queuedEntries = new();
+    
+    private bool entriesInitialized = false;
 
     private ModeSelectButton buttonTemplate;
 
@@ -277,6 +281,9 @@ internal class ConductBoardManager : MonoBehaviour
 
             Melon<Mod>.Logger.Msg("added");
         }
+        
+        FlushQueuedEntries();
+        entriesInitialized = true;
     }
 
     public async Task DownloadEntries()
@@ -323,7 +330,28 @@ internal class ConductBoardManager : MonoBehaviour
             if (typesToRemove.Contains(type)) Destroy(components[i]);
         }
     }
+    
+    private void FlushQueuedEntries()
+    {
+        while (queuedEntries.Count > 0)
+        {
+            boardContent.Add(queuedEntries.Dequeue());
+        }
+    }
 
+    public void AddEntry(string title, string body)
+    {
+        var section = new Section(title, body);
+    
+        if (entriesInitialized)
+        {
+            boardContent.Add(section);
+        }
+        else
+        {
+            queuedEntries.Enqueue(section);
+        }
+    }
     private struct Section
     {
         public bool UseBaseText;
