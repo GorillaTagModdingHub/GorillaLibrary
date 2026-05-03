@@ -9,6 +9,12 @@ public static class ConductBoardUtility
     /// </summary>
     public static void AddEntry(string title, string body)
     {
+        if (ConductBoardManager.Instance == null)
+        {
+            ConductBoardManager.QueueEntry(title, body);
+            return;
+        }
+
         ConductBoardManager.Instance.AddEntry(title, body);
     }
 }

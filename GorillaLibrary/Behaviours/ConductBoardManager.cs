@@ -22,6 +22,8 @@ internal class ConductBoardManager : MonoBehaviour
 {
     public static ConductBoardManager Instance { get; private set; }
     
+    private static readonly Queue<Section> staticQueuedEntries = [];
+    
     private int PageCount => boardContent.Count;
 
     private readonly List<Section> boardContent = [];
@@ -51,6 +53,8 @@ internal class ConductBoardManager : MonoBehaviour
 
     public void Start()
     {
+        Instance = this;
+        
         buttonTemplate = FindFirstObjectByType<GameModeSelectorButtonLayout>().GetField<ModeSelectButton>("pf_button");
 
         stumpRootObject = Array.Find(ZoneUtility.Objects, gameObject => gameObject.name == "TreeRoom");
@@ -335,6 +339,11 @@ internal class ConductBoardManager : MonoBehaviour
     
     private void FlushQueuedEntries()
     {
+        while (staticQueuedEntries.Count > 0)
+        {
+            queuedEntries.Enqueue(staticQueuedEntries.Dequeue());
+        }
+
         while (queuedEntries.Count > 0)
         {
             boardContent.Add(queuedEntries.Dequeue());
@@ -354,6 +363,12 @@ internal class ConductBoardManager : MonoBehaviour
             queuedEntries.Enqueue(section);
         }
     }
+    
+    public static void QueueEntry(string title, string body)
+    {
+        staticQueuedEntries.Enqueue(new Section(title, body));
+    }
+    
     private struct Section
     {
         public bool UseBaseText;
