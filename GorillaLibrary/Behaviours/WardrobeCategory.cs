@@ -5,29 +5,29 @@ using static CosmeticWardrobe;
 
 namespace GorillaLibrary.Behaviours;
 
-public abstract class WardrobeSection : MonoBehaviour
+public abstract class WardrobeCategory : MonoBehaviour
 {
     public abstract string Title { get; }
 
-    internal static MelonEvent<WardrobeSection, Tuple<Sprite, Sprite, Sprite>> SetIconRequest;
+    internal static MelonEvent<WardrobeCategory, Tuple<Sprite, Sprite, Sprite>> SetIconRequest = new();
 
-    internal static MelonEvent<WardrobeSection> UpdateCosmeticsRequest;
+    internal static MelonEvent<WardrobeCategory> UpdateCosmeticsRequest = new();
 
     internal int startingDisplayIndex;
 
-    public virtual void OnCategoryShown()
+    public virtual void OnPageShow()
     {
 
     }
 
-    public virtual void OnCategoryHidden()
+    public virtual void OnPageHide()
     {
 
     }
 
-    public abstract int GetSectionSize();
+    public abstract int GetSize();
 
-    public abstract void OnSectionActivated(bool hasActivated);
+    public abstract void OnActivated(bool hasActivated);
 
     public abstract void ApplyCosmetic(CosmeticWardrobeSelection selection, int index);
 

@@ -9,7 +9,7 @@ using static GorillaNetworking.CosmeticsController;
 
 namespace GorillaLibrary.Behaviours;
 
-internal class OutfitSection_Clone : WardrobeSection
+internal class OutfitSection_Clone : WardrobeCategory
 {
     public override string Title => "Clone";
 
@@ -43,16 +43,16 @@ internal class OutfitSection_Clone : WardrobeSection
         UpdateCosmetics();
     }
 
-    public override int GetSectionSize()
+    public override int GetSize()
     {
         return (int)AccessTools.Field(typeof(CosmeticsController), "maxOutfits").GetValue(null);
     }
 
-    public override void OnSectionActivated(bool hasActivated)
+    public override void OnActivated(bool hasActivated)
     {
         if (hasActivated)
         {
-            int size = GetSectionSize();
+            int size = GetSize();
 
             for (int i = 0; i < size; i++)
             {

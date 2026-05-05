@@ -15,7 +15,7 @@ public class WardrobeController : MonoBehaviour
 {
     public static CosmeticWardrobe ReferenceWardrobe;
 
-    public bool UseCustomCategory => _currentCategory != null;
+    public bool UseOverrides => _currentAttribute != null;
 
     private CosmeticWardrobe _cosmeticWardrobe;
 
@@ -25,11 +25,11 @@ public class WardrobeController : MonoBehaviour
 
     private CosmeticButton _nextOutfit, _previousOutfit;
 
-    private WardrobeCategoryAttribute _currentCategory;
+    private List<ModdedWardrobeSectionAttribute> _categories;
 
-    private List<WardrobeCategoryAttribute> _categories;
+    private ModdedWardrobeSectionAttribute _currentAttribute;
 
-    private WardrobeSection section;
+    private WardrobeCategory _currentCategory;
 
     private int _categoryIndex;
 
@@ -39,7 +39,7 @@ public class WardrobeController : MonoBehaviour
 
     private readonly List<GameObject> baseObjects = [];
 
-    private readonly Dictionary<WardrobeSection, Tuple<Sprite, Sprite, Sprite>> icons = [];
+    private readonly Dictionary<WardrobeCategory, Tuple<Sprite, Sprite, Sprite>> icons = [];
 
     internal void Awake()
     {
@@ -54,6 +54,8 @@ public class WardrobeController : MonoBehaviour
         _outfitText = _cosmeticWardrobe.GetField<TMP_Text>("outfitText");
         _nextOutfit = _cosmeticWardrobe.GetField<CosmeticButton>("nextOutfit");
         _previousOutfit = _cosmeticWardrobe.GetField<CosmeticButton>("previousOutfit");
+
+        if (_outfitText.IsObjectNull() || _nextOutfit.IsObjectNull() || _previousOutfit.IsObjectNull()) return;
 
         var baseCategories = Melon<Mod>.Instance.wardrobeCategories;
         _categories = (baseCategories != null && baseCategories.Count > 0) ? [null, .. baseCategories] : [];
@@ -76,6 +78,7 @@ public class WardrobeController : MonoBehaviour
             baseObjects.Add(button.GetField<SpriteRenderer>("equippedRightIcon")?.gameObject);
             baseObjects.Add(button.myText?.gameObject);
             baseObjects.Add(button.myTmpText?.gameObject);
+            baseObjects.Add(button.gameObject);
         }
 
         GameObject customButtonStorage = new("CustomButtonStorage");
@@ -107,11 +110,11 @@ public class WardrobeController : MonoBehaviour
 
             List<Tuple<GameObject, GameObject, CosmeticCategoryButton>> elements = [];
 
-            for (int i = 0; i < category.sections.Count; i++)
+            for (int i = 0; i < category.categories.Count; i++)
             {
                 if (i >= 5) break;
 
-                var section = category.sections[i];
+                var section = category.categories[i];
 
                 GameObject buttonContainer = new("ButtonContainer");
                 buttonContainer.transform.SetParent(customButtonStorage.transform);
@@ -182,11 +185,11 @@ public class WardrobeController : MonoBehaviour
             button.UpdateColor();
         }
 
-        WardrobeSection.UpdateCosmeticsRequest.Subscribe(UpdateCosmetics);
-        WardrobeSection.SetIconRequest.Subscribe(SetIcons);
+        WardrobeCategory.UpdateCosmeticsRequest.Subscribe(UpdateCosmetics);
+        WardrobeCategory.SetIconRequest.Subscribe(SetIcons);
     }
 
-    internal void UpdateCosmetics(WardrobeSection source)
+    internal void UpdateCosmetics(WardrobeCategory source)
     {
         Melon<Mod>.Logger.Msg("section");
         // if (section != source) return;
@@ -198,7 +201,7 @@ public class WardrobeController : MonoBehaviour
         UpdateCosmeticDisplays();
     }
 
-    internal void SetIcons(WardrobeSection source, Tuple<Sprite, Sprite, Sprite> tuple)
+    internal void SetIcons(WardrobeCategory source, Tuple<Sprite, Sprite, Sprite> tuple)
     {
         if (icons.ContainsKey(source)) icons[source] = tuple;
         else icons.Add(source, tuple);
@@ -208,28 +211,28 @@ public class WardrobeController : MonoBehaviour
 
     internal void OnSelectionNavigateNext()
     {
-        section.startingDisplayIndex++;
-        int size = section.GetSectionSize();
-        if (section.startingDisplayIndex >= size) section.startingDisplayIndex = 0;
+        _currentCategory.startingDisplayIndex++;
+        int size = _currentCategory.GetSize();
+        if (_currentCategory.startingDisplayIndex >= size) _currentCategory.startingDisplayIndex = 0;
 
         UpdateCosmeticDisplays();
     }
 
     internal void OnSelectionNavigatePrev()
     {
-        section.startingDisplayIndex--;
+        _currentCategory.startingDisplayIndex--;
 
-        if (section.startingDisplayIndex < 0)
+        if (_currentCategory.startingDisplayIndex < 0)
         {
-            int size = section.GetSectionSize();
+            int size = _currentCategory.GetSize();
             if (size % _selectionArray.Length == 0)
             {
-                section.startingDisplayIndex = size - _selectionArray.Length;
+                _currentCategory.startingDisplayIndex = size - _selectionArray.Length;
             }
             else
             {
-                section.startingDisplayIndex = size / _selectionArray.Length;
-                section.startingDisplayIndex *= _selectionArray.Length;
+                _currentCategory.startingDisplayIndex = size / _selectionArray.Length;
+                _currentCategory.startingDisplayIndex *= _selectionArray.Length;
             }
         }
 
@@ -238,15 +241,22 @@ public class WardrobeController : MonoBehaviour
 
     internal void OnCosmeticSelection(GorillaPressableButton button)
     {
-        for (int i = 0; i < _selectionArray.Length; i++)
+        try
         {
-            if (_selectionArray[i].selectButton != button) continue;
+            for (int i = 0; i < _selectionArray.Length; i++)
+            {
+                if (_selectionArray[i].selectButton != button) continue;
 
-            section.SelectCosmetic(i);
-            break;
+                _currentCategory.SelectCosmetic(i);
+                break;
+            }
+
+            UpdateCosmeticDisplays();
         }
-
-        UpdateCosmeticDisplays();
+        catch(Exception ex)
+        {
+            Melon<Mod>.Logger.Error(ex);
+        }
     }
 
     internal void OnPageNavigateNext()
@@ -265,27 +275,27 @@ public class WardrobeController : MonoBehaviour
 
     internal void OnCategorySelection(GorillaPressableButton baseButton, bool isLeftHand)
     {
-        for (int i = 0; i < _currentCategory.buttons.Count; i++)
+        for (int i = 0; i < _currentAttribute.buttons.Count; i++)
         {
-            var button = _currentCategory.buttons[i];
+            var button = _currentAttribute.buttons[i];
 
             if (button == baseButton)
             {
-                var previousSection = _currentCategory.sections[_currentCategory.buttons.IndexOf(_currentCategory.selectedButton)];
+                var previousSection = _currentAttribute.categories[_currentAttribute.buttons.IndexOf(_currentAttribute.selectedButton)];
 
-                _currentCategory.sections[i].OnSectionActivated(_currentCategory.selectedButton == button);
-                _currentCategory.selectedButton = button;
+                _currentAttribute.categories[i].OnActivated(_currentAttribute.selectedButton == button);
+                _currentAttribute.selectedButton = button;
 
-                section = _currentCategory.sections[i];
+                _currentCategory = _currentAttribute.categories[i];
 
-                if (previousSection != _currentCategory.sections[i])
+                if (previousSection != _currentAttribute.categories[i])
                 {
                     ReferenceWardrobe = _cosmeticWardrobe;
 
                     for (int k = 0; k < _selectionArray.Length; k++)
                     {
                         CosmeticWardrobeSelection cosmeticWardrobeSelection = _selectionArray[k];
-                        section.ResetCosmetic(cosmeticWardrobeSelection);
+                        _currentCategory.ResetCosmetic(cosmeticWardrobeSelection);
                     }
 
                     ReferenceWardrobe = null;
@@ -302,107 +312,110 @@ public class WardrobeController : MonoBehaviour
 
     internal void UpdateCategoryButtons()
     {
-        for (int i = 0; i < _currentCategory.buttons.Count; i++)
+        for (int i = 0; i < _currentAttribute.buttons.Count; i++)
         {
-            var button = _currentCategory.buttons[i];
-            var section = _currentCategory.sections[i];
+            var button = _currentAttribute.buttons[i];
+            var section = _currentAttribute.categories[i];
             Tuple<Sprite, Sprite, Sprite> tuple = icons.ContainsKey(section) ? icons[section] : Tuple.Create<Sprite, Sprite, Sprite>(null, null, null);
 
             if (tuple.Item1 != null) button.SetIcon(tuple.Item1);
             else if (tuple.Item2 != null || tuple.Item3 != null) button.SetDualIcon(tuple.Item2, tuple.Item3);
             else button.SetIcon(null);
 
-            int categorySize = section.GetSectionSize();
+            int categorySize = section.GetSize();
             button.enabled = categorySize > 0;
-            button.isOn = _currentCategory.selectedButton == button;
+            button.isOn = _currentAttribute.selectedButton == button;
             button.UpdateColor();
         }
     }
 
     internal void HandlePageNavigate()
     {
-        var previousCategory = _currentCategory;
-        _currentCategory = _categories[_categoryIndex];
+        var lastAttribute = _currentAttribute;
+        _currentAttribute = _categories[_categoryIndex];
 
-        if (_currentCategory != null)
+        baseObjects.Where(gameObject => gameObject.IsObjectExistent()).ForEach(gameObject => gameObject.SetActive(_currentAttribute == null));
+
+        try
         {
-            categoryButtonParent.SetActive(false);
-
-            if (previousCategory != _currentCategory)
+            if (_currentAttribute == null)
             {
-                UpdateCategoryButtons();
-                _currentCategory.selectedButton = _currentCategory.buttons.FirstOrDefault(button => button.enabled) ?? _currentCategory.buttons[0];
-                UpdateCategoryButtons();
-
-                _currentCategory.sections.ForEach(section => section.OnCategoryShown());
-                _currentCategory.objects.ForEach(gameObject => gameObject.SetActive(true));
-
-                if (previousCategory != null)
+                if (lastAttribute != null)
                 {
-                    previousCategory.objects.ForEach(gameObject => gameObject.SetActive(false));
+                    lastAttribute.categories.ForEach(section => section.OnPageHide());
+                    lastAttribute.objects.ForEach(gameObject => gameObject.SetActive(false));
 
                     ReferenceWardrobe = _cosmeticWardrobe;
 
                     for (int i = 0; i < _selectionArray.Length; i++)
                     {
                         CosmeticWardrobeSelection cosmeticWardrobeSelection = _selectionArray[i];
-                        section.ResetCosmetic(cosmeticWardrobeSelection);
+                        _currentCategory.ResetCosmetic(cosmeticWardrobeSelection);
                     }
 
                     ReferenceWardrobe = null;
                 }
 
-                section = _currentCategory.sections[_currentCategory.buttons.IndexOf(_currentCategory.selectedButton)];
-                UpdateCosmeticDisplays();
+                _currentCategory = null;
+                categoryButtonParent.SetActive(true);
+
+                _selectionArray.ForEach(selection => selection.displayHead.InvokeMethod("_ClearCurrent"));
+                _cosmeticWardrobe.InvokeMethod("UpdateCategoryButtons");
+                _cosmeticWardrobe.InvokeMethod("UpdateCosmeticDisplays");
             }
-        }
-        else
-        {
-            categoryButtonParent.SetActive(true);
-
-            _selectionArray.ForEach(selection => selection.displayHead.InvokeMethod("_ClearCurrent"));
-            _cosmeticWardrobe.InvokeMethod("UpdateCategoryButtons");
-            _cosmeticWardrobe.InvokeMethod("UpdateCosmeticDisplays");
-
-            if (previousCategory != null)
+            else
             {
-                previousCategory.sections.ForEach(section => section.OnCategoryHidden());
-                previousCategory.objects.ForEach(gameObject => gameObject.SetActive(false));
-
-                ReferenceWardrobe = _cosmeticWardrobe;
-
-                for (int i = 0; i < _selectionArray.Length; i++)
+                if (_currentAttribute != lastAttribute)
                 {
-                    CosmeticWardrobeSelection cosmeticWardrobeSelection = _selectionArray[i];
-                    section.ResetCosmetic(cosmeticWardrobeSelection);
+                    _currentAttribute.selectedButton = _currentAttribute.buttons.FirstOrDefault(button => button.enabled) ?? _currentAttribute.buttons[0];
+                    UpdateCategoryButtons();
                 }
+                
+                _currentCategory = _currentAttribute.categories[_currentAttribute.buttons.IndexOf(_currentAttribute.selectedButton)];
+                UpdateCosmeticDisplays();
 
-                ReferenceWardrobe = null;
+                _currentAttribute.categories.ForEach(section => section.OnPageShow());
+                _currentAttribute.objects.ForEach(gameObject => gameObject.SetActive(true));
+
+                if (lastAttribute != null)
+                {
+                    lastAttribute.objects.ForEach(gameObject => gameObject.SetActive(false));
+
+                    ReferenceWardrobe = _cosmeticWardrobe;
+
+                    for (int i = 0; i < _selectionArray.Length; i++)
+                    {
+                        CosmeticWardrobeSelection cosmeticWardrobeSelection = _selectionArray[i];
+                        _currentCategory.ResetCosmetic(cosmeticWardrobeSelection);
+                    }
+
+                    ReferenceWardrobe = null;
+                }
             }
-
-            section = null;
         }
-
-        baseObjects.Where(gameObject => gameObject.IsObjectExistent()).ForEach(gameObject => gameObject.SetActive(_currentCategory == null));
+        catch(Exception ex)
+        {
+            Melon<Mod>.Logger.Error(ex);
+        }
 
         OnOutfitTextUpdate();
     }
 
     private void UpdateCosmeticDisplays()
     {
-        if (section == null) return;
+        if (_currentCategory == null) return;
 
         ReferenceWardrobe = _cosmeticWardrobe;
 
         for (int i = 0; i < _selectionArray.Length; i++)
         {
             CosmeticWardrobeSelection cosmeticWardrobeSelection = _selectionArray[i];
-            section.ApplyCosmetic(cosmeticWardrobeSelection, section.startingDisplayIndex + i);
+            _currentCategory.ApplyCosmetic(cosmeticWardrobeSelection, _currentCategory.startingDisplayIndex + i);
         }
 
         ReferenceWardrobe = null;
 
-        int categorySize = section.GetSectionSize();
+        int categorySize = _currentCategory.GetSize();
 
         GorillaPressableButton nextSelection = _cosmeticWardrobe.GetField<GorillaPressableButton>("nextSelection");
         nextSelection.enabled = categorySize > _selectionArray.Length;
@@ -415,14 +428,9 @@ public class WardrobeController : MonoBehaviour
 
     internal void OnOutfitTextUpdate()
     {
-        try
-        {
-            _outfitText.text = (UseCustomCategory ? _currentCategory?.Title : "Base Wardrobe")?.ToUpper();
-        }
-        catch
-        {
+        if (_currentAttribute != null) _outfitText.text = _currentAttribute.Title.ToUpper();
+        else _outfitText.text = "WARDROBE";
 
-        }
         _nextOutfit.enabled = true;
         _nextOutfit.UpdateColor();
         _previousOutfit.enabled = true;

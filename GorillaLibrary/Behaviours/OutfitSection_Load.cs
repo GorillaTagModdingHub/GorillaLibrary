@@ -7,7 +7,7 @@ using static GorillaNetworking.CosmeticsController;
 
 namespace GorillaLibrary.Behaviours;
 
-internal class OutfitSection_Load : WardrobeSection
+internal class OutfitSection_Load : WardrobeCategory
 {
     public override string Title => "Load";
 
@@ -32,12 +32,12 @@ internal class OutfitSection_Load : WardrobeSection
         instance.LoadSavedOutfit(index);
     }
 
-    public override int GetSectionSize()
+    public override int GetSize()
     {
         return (int)AccessTools.Field(typeof(CosmeticsController), "maxOutfits").GetValue(null);
     }
 
-    public override void OnSectionActivated(bool hasActivated)
+    public override void OnActivated(bool hasActivated)
     {
         /*
         if (hasActivated)

@@ -6,6 +6,7 @@ using GorillaLibrary.Patches;
 using GorillaLibrary.Utilities;
 using HarmonyLib;
 using MelonLoader;
+using MelonLoader.Logging;
 using MelonLoader.Utils;
 using Photon.Pun;
 using System;
@@ -19,7 +20,7 @@ using UnityEngine;
 [assembly: MelonInfo(typeof(Mod), "GorillaLibrary", "1.0.2", "dev9998")]
 [assembly: MelonGame("Another Axiom", "Gorilla Tag")]
 [assembly: MelonIncompatibleAssemblies("GorillaLibrary.GameModes", "GorillaLibrary.Content")]
-[assembly: WardrobeCategory("Outfits", typeof(OutfitSection_Load), typeof(OutfitSection_Clone))]
+[assembly: ModdedWardrobeSection("Outfits", typeof(OutfitSection_Load), typeof(OutfitSection_Clone))]
 
 namespace GorillaLibrary;
 
@@ -27,11 +28,13 @@ internal sealed class Mod : MelonMod
 {
     internal Action unityAction;
 
-    internal List<WardrobeCategoryAttribute> wardrobeCategories;
+    internal List<ModdedWardrobeSectionAttribute> wardrobeCategories;
 
     private MelonPreferences_Category _stateCategory;
 
     private GameObject sharedObject;
+
+    private static MelonLogger.Instance unityLogger;
 
     public sealed override void OnEarlyInitializeMelon()
     {
@@ -52,6 +55,23 @@ internal sealed class Mod : MelonMod
         {
             HarmonyInstance.Patch(AccessTools.Method(gtModeSerializeType, "BroadcastTag", parameters: [typeof(NetPlayer), typeof(NetPlayer), typeof(PhotonMessageInfo)]), postfix: new(AccessTools.Method(typeof(GameManagerPatches), nameof(GameManagerPatches.ClientTagPatch))));
             HarmonyInstance.Patch(AccessTools.Method(gtModeSerializeType, "BroadcastRoundComplete", parameters: [typeof(PhotonMessageInfoWrapped)]), postfix: new(AccessTools.Method(typeof(GameManagerPatches), nameof(GameManagerPatches.ClientRoundCompletePatch))));
+        }
+
+        unityLogger = new MelonLogger.Instance("Unity Log", ColorARGB.White);
+
+        // https://github.com/BepInEx/BepInEx/blob/3fab71a1914132a1ce3a545caf3192da603f2258/Runtimes/Unity/BepInEx.Unity.Mono/Logging/UnityLogSource.cs#L49
+        
+        Application.LogCallback callback = new(OnUnityLogMessageReceived);
+        EventInfo logEvent = typeof(Application).GetEvent("logMessageReceived", BindingFlags.Public | BindingFlags.Static);
+
+        if (logEvent != null)
+        {
+            logEvent.AddEventHandler(null, callback);
+        }
+        else
+        {
+            MethodInfo registerLogCallback = typeof(Application).GetMethod("RegisterLogCallback", BindingFlags.Public | BindingFlags.Static);
+            registerLogCallback.Invoke(null, [callback]);
         }
     }
 
@@ -106,7 +126,7 @@ internal sealed class Mod : MelonMod
 
             assembly.GetCustomAttributes().ForEach(attribute =>
             {
-                if (attribute is WardrobeCategoryAttribute category)
+                if (attribute is ModdedWardrobeSectionAttribute category)
                 {
                     wardrobeCategories.Add(category);
                 }
@@ -118,10 +138,10 @@ internal sealed class Mod : MelonMod
 
         wardrobeCategories.ForEach(category =>
         {
-            var types = category.SectionTypes?.Where(type => typeof(WardrobeSection).IsAssignableFrom(type));
-            var list = new List<WardrobeSection>();
-            types.ForEach(type => list.Add((WardrobeSection)sharedObject.AddComponent(type)));
-            category.sections = list;
+            var types = category.SectionTypes?.Where(type => typeof(WardrobeCategory).IsAssignableFrom(type));
+            var list = new List<WardrobeCategory>();
+            types.ForEach(type => list.Add((WardrobeCategory)sharedObject.AddComponent(type)));
+            category.categories = list;
         });
 
         GorillaTagger.OnPlayerSpawned(Events.Core.OnGameInitialized.Invoke);
@@ -175,6 +195,29 @@ internal sealed class Mod : MelonMod
         catch (Exception ex)
         {
             LoggerInstance.Error(ex);
+        }
+    }
+
+    private static void OnUnityLogMessageReceived(string message, string stackTrace, LogType type)
+    {
+        // https://github.com/BepInEx/BepInEx/blob/3fab71a1914132a1ce3a545caf3192da603f2258/Runtimes/Unity/BepInEx.Unity.Mono/Logging/UnityLogSource.cs#L69
+
+        switch (type)
+        {
+            case LogType.Error:
+            case LogType.Assert:
+                unityLogger.Error(message);
+                break;
+            case LogType.Exception:
+                unityLogger.Error($"{message}\nStack trace:\n{stackTrace}");
+                break;
+            case LogType.Warning:
+                unityLogger.Warning(message);
+                break;
+            case LogType.Log:
+            default:
+                unityLogger.Msg(message);
+                break;
         }
     }
 }

@@ -15,14 +15,14 @@ internal class CosmeticWardrobePatches
     [HarmonyPatch("HandleCosmeticsUpdated"), HarmonyPostfix, HarmonyWrapSafe]
     public static void HandleCosmeticsUpdatedPatch(CosmeticWardrobe __instance)
     {
-        if (__instance.TryGetComponent(out WardrobeController controller) && controller.UseCustomCategory)
+        if (__instance.TryGetComponent(out WardrobeController controller) && controller.UseOverrides)
             controller.OnCosmeticsUpdated();
     }
 
     [HarmonyPatch("HandlePressedNextSelection"), HarmonyPrefix, HarmonyWrapSafe]
     public static bool HandleNextSelectionPatch(CosmeticWardrobe __instance)
     {
-        if (__instance.TryGetComponent(out WardrobeController controller) && controller.UseCustomCategory)
+        if (__instance.TryGetComponent(out WardrobeController controller) && controller.UseOverrides)
         {
             controller.OnSelectionNavigateNext();
             return false;
@@ -34,7 +34,7 @@ internal class CosmeticWardrobePatches
     [HarmonyPatch("HandlePressedPrevSelection"), HarmonyPrefix, HarmonyWrapSafe]
     public static bool HandlePrevSelectionPatch(CosmeticWardrobe __instance)
     {
-        if (__instance.TryGetComponent(out WardrobeController controller) && controller.UseCustomCategory)
+        if (__instance.TryGetComponent(out WardrobeController controller) && controller.UseOverrides)
         {
             controller.OnSelectionNavigatePrev();
             return false;
@@ -46,7 +46,7 @@ internal class CosmeticWardrobePatches
     [HarmonyPatch("HandlePressedSelectCosmeticButton"), HarmonyPrefix, HarmonyWrapSafe]
     public static bool HandleSelectCosmeticPatch(CosmeticWardrobe __instance, GorillaPressableButton button)
     {
-        if (__instance.TryGetComponent(out WardrobeController controller) && controller.UseCustomCategory)
+        if (__instance.TryGetComponent(out WardrobeController controller) && controller.UseOverrides)
         {
             controller.OnCosmeticSelection(button);
             return false;
@@ -58,7 +58,7 @@ internal class CosmeticWardrobePatches
     [HarmonyPatch("HandleChangeCategory"), HarmonyPrefix]
     public static bool ChangeCategoryPatch(CosmeticWardrobe __instance, GorillaPressableButton button, bool isLeft)
     {
-        if (__instance.TryGetComponent(out WardrobeController controller) && controller.UseCustomCategory)
+        if (__instance.TryGetComponent(out WardrobeController controller) && controller.UseOverrides)
         {
             controller.OnCategorySelection(button, isLeft);
             return false;
@@ -76,7 +76,7 @@ internal class CosmeticWardrobePatches
             return false;
         }
 
-        return false;
+        return true;
     }
 
     [HarmonyPatch("HandlePressedPrevOutfitButton"), HarmonyPrefix]
@@ -88,7 +88,7 @@ internal class CosmeticWardrobePatches
             return false;
         }
 
-        return false;
+        return true;
     }
 
     [HarmonyPatch("UpdateOutfitButtons"), HarmonyPrefix]
