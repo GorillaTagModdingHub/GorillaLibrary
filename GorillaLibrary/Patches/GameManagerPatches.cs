@@ -33,7 +33,7 @@ internal class GameManagerPatches
         MonoBehaviour behaviour = (MonoBehaviour)AccessTools.Field(typeof(GameMode), "activeNetworkHandler").GetValue(null);
         if (behaviour == null || !behaviour) return;
 
-        Events.GameMode.OnPlayerTagged.Invoke((GorillaGameManager)AccessTools.Field(behaviour.GetType(), "gameModeInstance").GetValue(behaviour), taggedPlayer, taggingPlayer);
+        Events.GameMode.OnPlayerTagged?.Invoke((GorillaGameManager)AccessTools.Field(behaviour.GetType(), "gameModeInstance").GetValue(behaviour), taggedPlayer, taggingPlayer);
     }
 
     [HarmonyPatch(typeof(GameMode), nameof(GameMode.BroadcastRoundComplete)), HarmonyPostfix]
@@ -44,7 +44,7 @@ internal class GameManagerPatches
         MonoBehaviour behaviour = (MonoBehaviour)AccessTools.Field(typeof(GameMode), "activeNetworkHandler").GetValue(null);
         if (behaviour == null || !behaviour) return;
 
-        Events.GameMode.OnRoundCompleted.Invoke((GorillaGameManager)AccessTools.Field(behaviour.GetType(), "gameModeInstance").GetValue(behaviour));
+        Events.GameMode.OnRoundCompleted?.Invoke((GorillaGameManager)AccessTools.Field(behaviour.GetType(), "gameModeInstance").GetValue(behaviour));
     }
 
     // [HarmonyPatch(typeof(GameModeSerializer), nameof(GameModeSerializer.BroadcastTag), argumentTypes: [typeof(NetPlayer), typeof(NetPlayer), typeof(PhotonMessageInfo)]), HarmonyPostfix]
@@ -53,7 +53,7 @@ internal class GameManagerPatches
         if (NetworkSystem.Instance.IsMasterClient || taggedPlayer == null || taggingPlayer == null || !info.Sender.IsMasterClient) return;
 
         Plugin.Logger.LogMessage("BroadcastTag");
-        Events.GameMode.OnPlayerTagged.Invoke(___gameModeInstance, taggedPlayer, taggingPlayer);
+        Events.GameMode.OnPlayerTagged?.Invoke(___gameModeInstance, taggedPlayer, taggingPlayer);
     }
 
     // [HarmonyPatch(typeof(GameModeSerializer), nameof(GameModeSerializer.BroadcastRoundComplete), argumentTypes: [typeof(PhotonMessageInfoWrapped)]), HarmonyPostfix]
@@ -62,6 +62,6 @@ internal class GameManagerPatches
         if (NetworkSystem.Instance.IsMasterClient || !info.Sender.IsMasterClient) return;
 
         Plugin.Logger.LogMessage("BroadcastRoundComplete");
-        Events.GameMode.OnRoundCompleted.Invoke(___gameModeInstance);
+        Events.GameMode.OnRoundCompleted?.Invoke(___gameModeInstance);
     }
 }

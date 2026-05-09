@@ -62,7 +62,7 @@ internal class ConductBoardManager : MonoBehaviour
         footerTextObject.transform.localScale = baseHeaderText.transform.localScale;
         SanitizeTextObject(footerTextObject);
 
-        var info = Plugin.Info.Metadata;
+        var info = Plugin.Instance.Info.Metadata;
         footerText = footerTextObject.GetComponent<TextMeshPro>();
         footerText.text = $"{info.Name} {info.Version}".ToUpper();
         footerText.enableAutoSizing = false;
@@ -196,7 +196,7 @@ internal class ConductBoardManager : MonoBehaviour
         string version = (string)JsonConvert.DeserializeObject<Dictionary<string, object>>(webRequest.downloadHandler.text)["tag_name"];
         Plugin.Logger.LogMessage($"GorillaLibrary is on Version {version}");
 
-        var info = Plugin.Info.Metadata;
+        var info = Plugin.Instance.Info.Metadata;
         Version installedVersion = info.Version;
         if (Version.TryParse(version, out Version latestVersion) && latestVersion > installedVersion)
         {

@@ -18,7 +18,7 @@ internal class RigContainerPatches
         __instance.Rig.OnColorChanged += eventSource.OnColourUpdated;
         _dictionary.Add(__instance, eventSource);
 
-        Events.Rig.OnRigAdded.Invoke(__instance.Rig, value);
+        Events.Rig.OnRigAdded?.Invoke(__instance.Rig, value);
     }
 
     [HarmonyPatch("OnDisable"), HarmonyPostfix]
@@ -29,7 +29,7 @@ internal class RigContainerPatches
             __instance.Rig.OnColorChanged -= eventSource.OnColourUpdated;
             _dictionary.Remove(__instance);
 
-            Events.Rig.OnRigRemoved.Invoke(__instance.Rig);
+            Events.Rig.OnRigRemoved?.Invoke(__instance.Rig);
         }
     }
 
@@ -39,7 +39,7 @@ internal class RigContainerPatches
 
         public void OnColourUpdated(Color colour)
         {
-            Events.Rig.OnColourChanged.Invoke(_rig, colour);
+            Events.Rig.OnColourChanged?.Invoke(_rig, colour);
         }
     }
 }

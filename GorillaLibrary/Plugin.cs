@@ -24,7 +24,7 @@ namespace GorillaLibrary;
 [BepInIncompatibility("org.legoandmars.gorillatag.utilla")]
 internal sealed class Plugin : BaseUnityPlugin
 {
-    internal static new BepInEx.PluginInfo Info;
+    internal static Plugin Instance;
 
     internal static new ManualLogSource Logger;
 
@@ -34,7 +34,7 @@ internal sealed class Plugin : BaseUnityPlugin
 
     public void Awake()
     {
-        Info = base.Info;
+        Instance = this;
         Logger = base.Logger;
 
         RuntimeHelpers.RunClassConstructor(typeof(Events).TypeHandle);
@@ -45,7 +45,7 @@ internal sealed class Plugin : BaseUnityPlugin
 
         if (AccessTools.Method(typeof(GorillaTagger), "OnGameOverlayActivated") is MethodInfo method)
         {
-            harmony.Patch(method, postfix: new(AccessTools.Method(typeof(GameOverlayPatch), nameof(GameOverlayPatch.Postfix)), priority: HarmonyLib.Priority.First));
+            harmony.Patch(method, postfix: new(AccessTools.Method(typeof(GameOverlayPatch), nameof(GameOverlayPatch.Postfix)), priority: Priority.First));
         }
 
         Assembly gtAssembly = typeof(GorillaGameManager).Assembly;
@@ -60,22 +60,24 @@ internal sealed class Plugin : BaseUnityPlugin
 
     public void Update()
     {
+        if (!CoreUtility.Initialized) return;
         InputUtility.Update();
     }
 
-    private void OnGameInitialized()
+    public void OnGameInitialized()
     {
-        NetworkSystem.Instance.OnMultiplayerStarted += Events.Room.OnRoomJoined.Invoke;
-        NetworkSystem.Instance.OnReturnedToSinglePlayer += Events.Room.OnRoomLeft.Invoke;
-        NetworkSystem.Instance.OnPlayerJoined += Events.Player.OnPlayerEnteredRoom.Invoke;
-        NetworkSystem.Instance.OnPlayerLeft += Events.Player.OnPlayerLeftRoom.Invoke;
+        NetworkSystem.Instance.OnMultiplayerStarted += Events.Room.OnRoomJoined;
+        NetworkSystem.Instance.OnReturnedToSinglePlayer += Events.Room.OnRoomLeft;
+        NetworkSystem.Instance.OnPlayerJoined += Events.Player.OnPlayerEnteredRoom;
+        NetworkSystem.Instance.OnPlayerLeft += Events.Player.OnPlayerLeftRoom;
 
         ZoneManagement.OnZoneChange += zoneData =>
         {
             IEnumerable<GTZone> activeZones = zoneData.Where(data => data.active).Select(data => data.zone);
-            Events.Zone.OnZonesChanged.Invoke(activeZones);
+            Events.Zone.OnZonesChanged?.Invoke(activeZones);
         };
 
+        CoreUtility.Initialize();
         InputUtility.Initialize();
         RigUtility.Initialize();
 
@@ -101,11 +103,8 @@ internal sealed class Plugin : BaseUnityPlugin
             gup.Enabled = stateEntry.Value;
         }
 
-        sharedObject = new GameObject($"{Info.Metadata.Name} {Info.Metadata.Version}");
+        sharedObject = new GameObject($"{Info.Metadata.Name} {Info.Metadata.Version}", typeof(NetworkController), typeof(GameModeManager), typeof(ConductBoardManager));
         DontDestroyOnLoad(sharedObject);
-        sharedObject.AddComponent<NetworkController>();
-        sharedObject.AddComponent<GameModeManager>();
-        sharedObject.AddComponent<ConductBoardManager>();
 
         Sections.ForEach(category =>
         {
@@ -115,8 +114,7 @@ internal sealed class Plugin : BaseUnityPlugin
             category.categories = list;
         });
 
-        Events.Core.OnGameInitialized.Invoke();
-        CoreUtility.Initialize();
+        Events.Core.OnGameInitialized?.Invoke();
     }
 
     private void OnEvent(EventData data)
@@ -127,10 +125,9 @@ internal sealed class Plugin : BaseUnityPlugin
             {
                 case 255:
                     Hashtable hashtable = (Hashtable)data[249];
-                    if (NetworkSystem.Instance is NetworkSystem netSys && netSys.GetPlayer(data.Sender) is NetPlayer netPlayer && hashtable.TryGetValue(byte.MaxValue, out object value))
+                    if (NetworkSystem.Instance is NetworkSystem netSys && netSys.GetPlayer(data.Sender) is NetPlayer netPlayer && hashtable.TryGetValue(byte.MaxValue, out object value) && value is string nickName)
                     {
-                        string nickName = value as string;
-                        Events.Player.OnPlayerNameChanged.Invoke(netPlayer, nickName);
+                        Events.Player.OnPlayerNameChanged?.Invoke(netPlayer, nickName);
                     }
                     break;
             }

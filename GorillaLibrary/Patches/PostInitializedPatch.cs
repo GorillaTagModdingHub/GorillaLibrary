@@ -7,8 +7,7 @@ namespace GorillaLibrary.Patches
     {
         public static void Postfix()
         {
-            Events.Core.OnGameInitialized.Invoke();
-            Events.Core.OnGameInitialized = null;
+            Plugin.Instance.OnGameInitialized();
         }
     }
 }

@@ -28,12 +28,6 @@
 		<Reference Include="BepInEx.Harmony">
 			<HintPath>$(BepInExAssemblyPath)\BepInEx.Harmony.dll</HintPath>
 		</Reference>
-		<Reference Include="Cinemachine">
-			<HintPath>$(GameAssemblyPath)\Cinemachine.dll</HintPath>
-		</Reference>
-		<Reference Include="clipper_library">
-			<HintPath>$(GameAssemblyPath)\clipper_library.dll</HintPath>
-		</Reference>
 		<Reference Include="Fusion.Runtime">
 			<HintPath>$(GameAssemblyPath)\Fusion.Runtime.dll</HintPath>
 		</Reference>
@@ -193,9 +187,6 @@
 		<Reference Include="UnityEngine.PhysicsModule">
 			<HintPath>$(GameAssemblyPath)\UnityEngine.PhysicsModule.dll</HintPath>
 		</Reference>
-		<Reference Include="UnityEngine.ProfilerModule">
-			<HintPath>$(GameAssemblyPath)\UnityEngine.ProfilerModule.dll</HintPath>
-		</Reference>
 		<Reference Include="UnityEngine.ScreenCaptureModule">
 			<HintPath>$(GameAssemblyPath)\UnityEngine.ScreenCaptureModule.dll</HintPath>
 		</Reference>
@@ -226,9 +217,6 @@
 		<Reference Include="UnityEngine.TerrainPhysicsModule">
 			<HintPath>$(GameAssemblyPath)\UnityEngine.TerrainPhysicsModule.dll</HintPath>
 		</Reference>
-		<Reference Include="UnityEngine.TextCoreModule">
-			<HintPath>$(GameAssemblyPath)\UnityEngine.TextCoreModule.dll</HintPath>
-		</Reference>
 		<Reference Include="UnityEngine.TextRenderingModule">
 			<HintPath>$(GameAssemblyPath)\UnityEngine.TextRenderingModule.dll</HintPath>
 		</Reference>
@@ -249,9 +237,6 @@
 		</Reference>
 		<Reference Include="UnityEngine.UmbraModule">
 			<HintPath>$(GameAssemblyPath)\UnityEngine.UmbraModule.dll</HintPath>
-		</Reference>
-		<Reference Include="UnityEngine.UNETModule">
-			<HintPath>$(GameAssemblyPath)\UnityEngine.UNETModule.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.UnityAnalyticsModule">
 			<HintPath>$(GameAssemblyPath)\UnityEngine.UnityAnalyticsModule.dll</HintPath>
