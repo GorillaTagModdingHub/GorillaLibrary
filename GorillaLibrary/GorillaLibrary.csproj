@@ -11,7 +11,7 @@
 			<HintPath>$(BepInExAssemblyPath)\0Harmony.dll</HintPath>
 		</Reference>
 		<Reference Include="AA.Mothership">
-		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\AA.Mothership.dll</HintPath>
+			<HintPath>$(GameAssemblyPath)\AA.Mothership.dll</HintPath>
 		</Reference>
 		<Reference Include="Assembly-CSharp">
 			<HintPath>$(GameAssemblyPath)\Assembly-CSharp.dll</HintPath>
@@ -35,13 +35,13 @@
 			<HintPath>$(GameAssemblyPath)\clipper_library.dll</HintPath>
 		</Reference>
 		<Reference Include="Fusion.Runtime">
-		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Fusion.Runtime.dll</HintPath>
+			<HintPath>$(GameAssemblyPath)\Fusion.Runtime.dll</HintPath>
 		</Reference>
 		<Reference Include="Mono.Security">
 			<HintPath>$(GameAssemblyPath)\Mono.Security.dll</HintPath>
 		</Reference>
 		<Reference Include="Newtonsoft.Json">
-		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Newtonsoft.Json.dll</HintPath>
+			<HintPath>$(GameAssemblyPath)\Newtonsoft.Json.dll</HintPath>
 		</Reference>
 		<Reference Include="Oculus.Platform">
 			<HintPath>$(GameAssemblyPath)\Oculus.Platform.dll</HintPath>
@@ -74,10 +74,10 @@
 			<HintPath>$(GameAssemblyPath)\PlayFab.dll</HintPath>
 		</Reference>
 		<Reference Include="SteamVR">
-		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\SteamVR.dll</HintPath>
+			<HintPath>$(GameAssemblyPath)\SteamVR.dll</HintPath>
 		</Reference>
 		<Reference Include="SteamVR_Actions">
-		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\SteamVR_Actions.dll</HintPath>
+			<HintPath>$(GameAssemblyPath)\SteamVR_Actions.dll</HintPath>
 		</Reference>
 		<Reference Include="System.EnterpriseServices">
 			<HintPath>$(GameAssemblyPath)\System.EnterpriseServices.dll</HintPath>
@@ -101,7 +101,7 @@
 			<HintPath>$(GameAssemblyPath)\Unity.Mathematics.dll</HintPath>
 		</Reference>
 		<Reference Include="Unity.TextMeshPro">
-		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+			<HintPath>$(GameAssemblyPath)\Unity.TextMeshPro.dll</HintPath>
 		</Reference>
 		<Reference Include="Unity.Timeline">
 			<HintPath>$(GameAssemblyPath)\Unity.Timeline.dll</HintPath>
