@@ -2,7 +2,6 @@
 using GorillaLibrary.Utilities;
 using GorillaNetworking;
 using HarmonyLib;
-using MelonLoader;
 using System;
 
 namespace GorillaLibrary.Patches
@@ -15,11 +14,11 @@ namespace GorillaLibrary.Patches
         {
             Type joinTriggerType = __instance.GetType();
 
-            Melon<Mod>.Logger.Msg($"{joinTriggerType.Name}.{nameof(GorillaNetworkJoinTrigger.GetDesiredGameType)}");
+            Plugin.Logger.LogMessage($"{joinTriggerType.Name}.{nameof(GorillaNetworkJoinTrigger.GetDesiredGameType)}");
 
             if (joinTriggerType == typeof(GorillaNetworkRankedJoinTrigger) || ___zone == GTZone.ranked)
             {
-                Melon<Mod>.Logger.Msg($"Ranked JoinTrigger resorting to hardcoded infection mode");
+                Plugin.Logger.LogMessage($"Ranked JoinTrigger resorting to hardcoded infection mode");
                 __result = GameModeType.InfectionCompetitive.ToString();
                 return false;
             }
@@ -35,22 +34,22 @@ namespace GorillaLibrary.Patches
                     GameModeType verifiedGameMode = (GameModeType)AccessTools.Method(GorillaGameModes.GameMode.GameModeZoneMapping.GetType(), "VerifyModeForZone").Invoke(GorillaGameModes.GameMode.GameModeZoneMapping, [__instance.zone, gameModeType, NetworkSystem.Instance.SessionIsPrivate]);
                     if (verifiedGameMode == gameModeType)
                     {
-                        Melon<Mod>.Logger.Msg($"JoinTrigger of {___zone.GetName()} allowing generic game mode: {currentGameMode} under {gameModeType}");
+                        Plugin.Logger.LogMessage($"JoinTrigger of {___zone.GetName()} allowing generic game mode: {currentGameMode} under {gameModeType}");
                         __result = currentGameMode;
                         return false;
                     }
 
-                    Melon<Mod>.Logger.Msg($"JoinTrigger of {___zone.GetName()} changing unsupported game mode: {currentGameMode} under {gameModeType}");
+                    Plugin.Logger.LogMessage($"JoinTrigger of {___zone.GetName()} changing unsupported game mode: {currentGameMode} under {gameModeType}");
                     __result = verifiedGameMode.ToString();
                     return false;
                 }
 
-                Melon<Mod>.Logger.Msg($"JoinTrigger of {___zone.GetName()} allowing custom game mode: {currentGameMode}");
+                Plugin.Logger.LogMessage($"JoinTrigger of {___zone.GetName()} allowing custom game mode: {currentGameMode}");
                 __result = currentGameMode;
                 return false;
             }
 
-            Melon<Mod>.Logger.Msg($"JoinTrigger of {___zone.GetName()} naturally allows game mode: {currentGameMode}");
+            Plugin.Logger.LogMessage($"JoinTrigger of {___zone.GetName()} naturally allows game mode: {currentGameMode}");
             return true;
         }
 

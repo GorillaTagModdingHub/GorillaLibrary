@@ -2,7 +2,6 @@
 using GorillaLibrary.Utilities;
 using GorillaNetworking;
 using HarmonyLib;
-using MelonLoader;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -88,7 +87,7 @@ namespace GorillaLibrary.Patches
             if (!___didInitializeGameMode)
             {
                 string gameMode = PlayerPrefs.GetString(ModePreferenceKey, GameModeType.Infection.ToString());
-                Melon<Mod>.Logger.Msg($"Initial Game Mode: {gameMode}");
+                Plugin.Logger.LogMessage($"Initial Game Mode: {gameMode}");
 
                 AccessTools.Field(typeof(GorillaComputer), "sessionCount").SetValue(null, 100);
                 __instance.leftHanded = PlayerPrefs.GetInt("leftHanded", 0) == 1;

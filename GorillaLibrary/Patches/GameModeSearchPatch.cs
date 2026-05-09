@@ -1,6 +1,5 @@
 ﻿using GorillaLibrary.Utilities;
 using HarmonyLib;
-using MelonLoader;
 
 namespace GorillaLibrary.Patches;
 
@@ -15,7 +14,7 @@ internal class GameModeSearchPatch
             return false;
         }
 
-        Melon<Mod>.Logger.Error($"Gamemode could not be found in string: {gmString}");
+        Plugin.Logger.LogError($"Gamemode could not be found in string: {gmString}");
         return true;
     }
 }

@@ -1,13 +1,8 @@
-﻿using System;
-
-namespace GorillaLibrary;
+﻿namespace GorillaLibrary;
 
 public class Events
 {
     public static readonly CoreEvents Core = new();
-
-    [Obsolete]
-    public static readonly CoreEvents Game = Core;
 
     public static readonly PlayerEvents Player = new();
 

@@ -1,6 +1,5 @@
 ﻿using GorillaGameModes;
 using HarmonyLib;
-using MelonLoader;
 using PlayFab;
 using PlayFab.ClientModels;
 using System;
@@ -31,7 +30,7 @@ public static class PlayerUtility
             onAccountInfoRecieved?.Invoke(accountInfo);
         }, error =>
         {
-            Melon<Mod>.Logger.Error(error.GenerateErrorReport());
+            Plugin.Logger.LogError(error.GenerateErrorReport());
         });
 
         return null;

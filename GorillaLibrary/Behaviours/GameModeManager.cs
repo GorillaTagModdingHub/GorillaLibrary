@@ -1,11 +1,12 @@
-﻿using GorillaGameModes;
+﻿using BepInEx;
+using BepInEx.Bootstrap;
+using GorillaGameModes;
 using GorillaLibrary.Attributes;
 using GorillaLibrary.Models;
 using GorillaLibrary.Patches;
 using GorillaLibrary.Utilities;
 using GorillaNetworking;
 using HarmonyLib;
-using MelonLoader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,7 @@ internal class GameModeManager : MonoBehaviour
     // Custom game modes
     public List<GameModeWrapper> CustomGameModes;
     private GameObject customGameModeContainer;
-    private List<ModInfo> pluginInfos;
+    private List<PluginInfo> pluginInfos;
 
     private Dictionary<int, GorillaGameManager> gameModeTable;
 
@@ -65,22 +66,22 @@ internal class GameModeManager : MonoBehaviour
             ModdedGamemodesPerMode.Add(modeType, new GameModeWrapper(Constants.ModdedPrefix, $"Modded {GameModeUtility.GetGameModeName(modeType)}", modeType));
         }
 
-        Melon<Mod>.Logger.Msg($"Modded Game Modes: {string.Join(", ", ModdedGamemodesPerMode.Select(item => item.Value).Select(mode => mode.DisplayName).Select(displayName => string.Format("\"{0}\"", displayName)))}");
+        Plugin.Logger.LogMessage($"Modded Game Modes: {string.Join(", ", ModdedGamemodesPerMode.Select(item => item.Value).Select(mode => mode.DisplayName).Select(displayName => string.Format("\"{0}\"", displayName)))}");
         ModdedGamemodes = [.. ModdedGamemodesPerMode.Values];
 
         Gamemodes = [.. DefaultGameModesPerMode.Values];
 
         pluginInfos = GetPluginInfos();
         CustomGameModes = GetGamemodes(pluginInfos);
-        Melon<Mod>.Logger.Msg($"Custom Game Modes: {string.Join(", ", CustomGameModes.Select(mode => mode.DisplayName).Select(displayName => string.Format("\"{0}\"", displayName)))}");
+        Plugin.Logger.LogMessage($"Custom Game Modes: {string.Join(", ", CustomGameModes.Select(mode => mode.DisplayName).Select(displayName => string.Format("\"{0}\"", displayName)))}");
         Gamemodes.AddRange(ModdedGamemodes.Concat(CustomGameModes));
         Gamemodes.ForEach(AddGamemodeToPrefabPool);
-        Melon<Mod>.Logger.Msg($"Game Modes: {string.Join(", ", Gamemodes.Select(mode => mode.DisplayName).Select(displayName => string.Format("\"{0}\"", displayName)))}");
+        Plugin.Logger.LogMessage($"Game Modes: {string.Join(", ", Gamemodes.Select(mode => mode.DisplayName).Select(displayName => string.Format("\"{0}\"", displayName)))}");
 
         Initialization.SetResult(this);
     }
 
-    public List<GameModeWrapper> GetGamemodes(List<ModInfo> infos)
+    public List<GameModeWrapper> GetGamemodes(List<PluginInfo> infos)
     {
         List<GameModeWrapper> gamemodes = [];
 
@@ -100,32 +101,27 @@ internal class GameModeManager : MonoBehaviour
         return gamemodes;
     }
 
-    List<ModInfo> GetPluginInfos()
+    List<PluginInfo> GetPluginInfos()
     {
-        List<ModInfo> infos = [];
+        List<PluginInfo> infos = [];
 
-        foreach (var melonBase in MelonBase.RegisteredMelons)
+        foreach (var info in Chainloader.PluginInfos)
         {
-            Melon<Mod>.Logger.Msg(melonBase.GetType().FullName);
-
-            if (melonBase is not MelonMod mod)
-            {
-                Melon<Mod>.Logger.Warning("not melonmod");
-                continue;
-            }
-
-            Type type = mod.GetType();
+            if (info.Value is null) continue;
+            BaseUnityPlugin plugin = info.Value.Instance;
+            if (plugin is null) continue;
+            Type type = plugin.GetType();
 
             IEnumerable<GameModeWrapper> gamemodes = GetGamemodes(type);
 
             if (gamemodes.Any())
             {
-                infos.Add(new ModInfo
+                infos.Add(new PluginInfo
                 {
-                    Mod = mod,
+                    Plugin = plugin,
                     Gamemodes = [.. gamemodes],
-                    OnGamemodeJoin = CreateJoinLeaveAction(mod, type, typeof(ModdedGamemodeJoinAttribute)),
-                    OnGamemodeLeave = CreateJoinLeaveAction(mod, type, typeof(ModdedGamemodeLeaveAttribute))
+                    OnGamemodeJoin = CreateJoinLeaveAction(plugin, type, typeof(ModdedGamemodeJoinAttribute)),
+                    OnGamemodeLeave = CreateJoinLeaveAction(plugin, type, typeof(ModdedGamemodeLeaveAttribute))
                 });
             }
         }
@@ -133,11 +129,11 @@ internal class GameModeManager : MonoBehaviour
         return infos;
     }
 
-    Action<string> CreateJoinLeaveAction(MelonMod melonMod, Type baseType, Type attribute)
+    Action<string> CreateJoinLeaveAction(BaseUnityPlugin plugin, Type baseType, Type attribute)
     {
         ParameterExpression param = Expression.Parameter(typeof(string));
         ParameterExpression[] paramExpression = [param];
-        ConstantExpression instance = Expression.Constant(melonMod);
+        ConstantExpression instance = Expression.Constant(plugin);
         BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
         Action<string> action = null;
@@ -189,7 +185,7 @@ internal class GameModeManager : MonoBehaviour
     {
         if (GameMode.gameModeKeyByName.ContainsKey(gamemode.ID))
         {
-            Melon<Mod>.Logger.Warning($"Game Mode already exists: has ID {gamemode.ID}");
+            Plugin.Logger.LogWarning($"Game Mode already exists: has ID {gamemode.ID}");
             return;
         }
 
@@ -209,7 +205,7 @@ internal class GameModeManager : MonoBehaviour
 
             if (gmKey == null)
             {
-                Melon<Mod>.Logger.Warning($"Game Mode not made cuz lack of info: has ID {gamemode.ID}");
+                Plugin.Logger.LogWarning($"Game Mode not made cuz lack of info: has ID {gamemode.ID}");
                 return;
             }
 
@@ -227,7 +223,7 @@ internal class GameModeManager : MonoBehaviour
 
         if (gameModeTable.ContainsKey(gameModeKey))
         {
-            Melon<Mod>.Logger.Warning($"Game Mode with name '{gameModeTable[gameModeKey].GameModeName()}' is already using GameType '{gameModeKey}'.");
+            Plugin.Logger.LogWarning($"Game Mode with name '{gameModeTable[gameModeKey].GameModeName()}' is already using GameType '{gameModeKey}'.");
             Destroy(prefab);
             return;
         }
@@ -242,7 +238,7 @@ internal class GameModeManager : MonoBehaviour
 
         if (gameMode.fastJumpLimit == 0 || gameMode.fastJumpMultiplier == 0)
         {
-            Melon<Mod>.Logger.Warning($"FAST JUMP SPEED AREN'T ASSIGNED FOR {gmType.Name}!!! ASSIGN THESE ASAP");
+            Plugin.Logger.LogWarning($"FAST JUMP SPEED AREN'T ASSIGNED FOR {gmType.Name}!!! ASSIGN THESE ASAP");
 
             float[] speed = gameMode.LocalPlayerSpeed();
             gameMode.fastJumpLimit = speed[0];
@@ -254,28 +250,28 @@ internal class GameModeManager : MonoBehaviour
     {
         string gamemode = args.Gamemode;
 
-        Melon<Mod>.Logger.Msg($"Joined room: with game mode {gamemode}");
+        Plugin.Logger.LogMessage($"Joined room: with game mode {gamemode}");
 
         foreach (var pluginInfo in pluginInfos)
         {
-            Melon<Mod>.Logger.Msg($"Plugin {pluginInfo.Mod.Info.Name}: {string.Join(", ", pluginInfo.Gamemodes.Select(gm => gm.ID))}");
+            Plugin.Logger.LogMessage($"Plugin {pluginInfo}");
 
             if (pluginInfo.Gamemodes.Any(x => gamemode.Contains(x.ID)))
             {
                 try
                 {
                     pluginInfo.OnGamemodeJoin?.Invoke(gamemode);
-                    Melon<Mod>.Logger.Msg("Plugin is suitable for game mode");
+                    Plugin.Logger.LogMessage("Plugin is suitable for game mode");
                 }
                 catch (Exception ex)
                 {
-                    Melon<Mod>.Logger.Error($"Join action could not be called");
-                    Melon<Mod>.Logger.Error(ex);
+                    Plugin.Logger.LogError($"Join action could not be called");
+                    Plugin.Logger.LogError(ex);
                 }
                 continue;
             }
 
-            Melon<Mod>.Logger.Msg("Plugin is unsupported for game mode");
+            Plugin.Logger.LogMessage("Plugin is unsupported for game mode");
         }
     }
 
@@ -283,7 +279,7 @@ internal class GameModeManager : MonoBehaviour
     {
         string gamemode = args.Gamemode;
 
-        Melon<Mod>.Logger.Msg($"Left room: with game mode {gamemode}");
+        Plugin.Logger.LogMessage($"Left room: with game mode {gamemode}");
 
         foreach (var pluginInfo in pluginInfos)
         {
@@ -296,8 +292,8 @@ internal class GameModeManager : MonoBehaviour
                 }
                 catch (Exception ex)
                 {
-                    Melon<Mod>.Logger.Error($"Leave action could not be called");
-                    Melon<Mod>.Logger.Error(ex);
+                    Plugin.Logger.LogError($"Leave action could not be called");
+                    Plugin.Logger.LogError(ex);
                 }
             }
         }

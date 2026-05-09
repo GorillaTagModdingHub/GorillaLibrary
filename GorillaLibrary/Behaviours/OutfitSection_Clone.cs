@@ -1,7 +1,6 @@
 ﻿using GorillaLibrary.Extensions;
 using GorillaNetworking;
 using HarmonyLib;
-using System;
 using System.Linq;
 using UnityEngine;
 using static CosmeticWardrobe;
@@ -15,7 +14,7 @@ internal class OutfitSection_Clone : WardrobeCategory
 
     public void Awake()
     {
-        Events.Cosmetics.OnWornCosmeticsUpdated.Subscribe(UpdateCosmetics);
+        Events.Cosmetics.OnWornCosmeticsUpdated += UpdateCosmetics;
     }
 
     public override void ApplyCosmetic(CosmeticWardrobeSelection selection, int index)

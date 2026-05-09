@@ -13,7 +13,7 @@ internal class OutfitSection_Load : WardrobeCategory
 
     public void Awake()
     {
-        Events.Cosmetics.OnWornCosmeticsUpdated.Subscribe(UpdateCosmetics);
+        Events.Cosmetics.OnWornCosmeticsUpdated += UpdateCosmetics;
     }
 
     public override void ApplyCosmetic(CosmeticWardrobeSelection selection, int index)

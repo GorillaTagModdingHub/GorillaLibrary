@@ -1,5 +1,4 @@
 ﻿using GorillaLibrary.Models;
-using MelonLoader;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -14,8 +13,8 @@ namespace GorillaLibrary.Utilities;
 
 public static class WebSocketUtility
 {
-    public static MelonEvent<WebSocketData> OnConnected = new(), OnDisconnect = new();
-    public static MelonEvent<WebSocketData, Exception> OnError;
+    public static Action<WebSocketData> OnConnected, OnDisconnect;
+    public static Action<WebSocketData, Exception> OnError;
 
     private static readonly Dictionary<string, WebSocketData> _data = [];
 
@@ -40,7 +39,7 @@ public static class WebSocketUtility
         catch (Exception ex)
         {
             OnError.Invoke(data, ex);
-            MelonLogger.Error(ex.Message);
+            Plugin.Logger.LogError(ex.Message);
         }
 
         return data;
@@ -92,8 +91,7 @@ public static class WebSocketUtility
                         }
                         else
                         {
-                            MelonLogger.Warning(
-                                "received message without a 'type' field. make sure your server returns a type in the json message.");
+                            Plugin.Logger.LogWarning("received message without a 'type' field. make sure your server returns a type in the json message.");
                         }
                     }
                     catch (Exception ex)

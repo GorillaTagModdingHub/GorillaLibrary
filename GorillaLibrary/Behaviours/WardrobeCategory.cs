@@ -1,5 +1,4 @@
-﻿using MelonLoader;
-using System;
+﻿using System;
 using UnityEngine;
 using static CosmeticWardrobe;
 
@@ -9,9 +8,9 @@ public abstract class WardrobeCategory : MonoBehaviour
 {
     public abstract string Title { get; }
 
-    internal static MelonEvent<WardrobeCategory, Tuple<Sprite, Sprite, Sprite>> SetIconRequest = new();
+    internal static Action<WardrobeCategory, Tuple<Sprite, Sprite, Sprite>> SetIconRequest;
 
-    internal static MelonEvent<WardrobeCategory> UpdateCosmeticsRequest = new();
+    internal static Action<WardrobeCategory> UpdateCosmeticsRequest;
 
     internal int startingDisplayIndex;
 

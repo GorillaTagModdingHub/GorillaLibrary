@@ -3,7 +3,6 @@ using GorillaNetworking;
 using GorillaTag;
 using GorillaTagScripts.VirtualStumpCustomMaps;
 using HarmonyLib;
-using MelonLoader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,11 +48,11 @@ namespace GorillaLibrary.Behaviours
             if (!GameModeManager.Initialization.Task.IsCompleted)
                 await GameModeManager.Initialization.Task;
 
-            Melon<Mod>.Logger.Msg($"UtillaGameModeSelector {Zone}");
+            Plugin.Logger.LogMessage($"UtillaGameModeSelector {Zone}");
 
             if (Active || Layout is CustomMapModeSelector)
             {
-                Melon<Mod>.Logger.Msg("Checking game mode validity");
+                Plugin.Logger.LogMessage("Checking game mode validity");
                 CheckGameMode();
             }
 
@@ -93,7 +92,7 @@ namespace GorillaLibrary.Behaviours
 
             gameModeList = [];
 
-            Melon<Mod>.Logger.Msg($"GetSelectorGameModes {Zone}");
+            Plugin.Logger.LogMessage($"GetSelectorGameModes {Zone}");
 
             GameModeType[] modesForZone = Layout is CustomMapModeSelector ? [.. (global::System.Collections.Generic.List<global::GorillaGameModes.GameModeType>)global::HarmonyLib.AccessTools.Field(typeof(global::GorillaTagScripts.VirtualStumpCustomMaps.CustomMapModeSelector), "gamemodes").GetValue(null)] : [.. global::GorillaGameModes.GameMode.GameModeZoneMapping.GetModesForZone(Zone, global::NetworkSystem.Instance.SessionIsPrivate)];
 
@@ -111,7 +110,7 @@ namespace GorillaLibrary.Behaviours
             {
                 if (GameModeManager.Instance.ModdedGamemodesPerMode.TryGetValue(modesForZone[i], out Models.GameModeWrapper gamemode))
                 {
-                    Melon<Mod>.Logger.Msg($"+ \"{gamemode.DisplayName}\" ({modesForZone[i].GetName()})");
+                    Plugin.Logger.LogMessage($"+ \"{gamemode.DisplayName}\" ({modesForZone[i].GetName()})");
                     gameModeList.Add(gamemode);
                     continue;
                 }
@@ -125,7 +124,7 @@ namespace GorillaLibrary.Behaviours
                 for (int i = 0; i < customGameModes.Count; i++)
                 {
                     Models.GameModeWrapper gameMode = customGameModes[i];
-                    Melon<Mod>.Logger.Msg($"+ \"{gameMode.DisplayName}\"");
+                    Plugin.Logger.LogMessage($"+ \"{gameMode.DisplayName}\"");
                     gameModeList.Add(gameMode);
                     continue;
                 }
@@ -141,7 +140,7 @@ namespace GorillaLibrary.Behaviours
 
             if (SelectorGameModes.TryAdd(sessionIsPrivate, finalGameModeList))
             {
-                Melon<Mod>.Logger.Msg(string.Join(", ", finalGameModeList.Select(gameMode => gameMode.DisplayName).Select(gameMode => string.Format("\"{0}\"", gameMode))));
+                Plugin.Logger.LogMessage(string.Join(", ", finalGameModeList.Select(gameMode => gameMode.DisplayName).Select(gameMode => string.Format("\"{0}\"", gameMode))));
             }
 
             return finalGameModeList;
@@ -179,7 +178,7 @@ namespace GorillaLibrary.Behaviours
 
         public void SetDefaultMode(string defaultMode)
         {
-            Melon<Mod>.Logger.Msg($"SetDefaultMode : {defaultMode}");
+            Plugin.Logger.LogMessage($"SetDefaultMode : {defaultMode}");
 
             string currentMode = GorillaComputer.instance.currentGameMode.Value;
             bool isModded = currentMode.Contains(Constants.ModdedPrefix);
@@ -195,7 +194,7 @@ namespace GorillaLibrary.Behaviours
             var modeNames = GetSelectorGameModes().Select(game_mode => game_mode != null ? game_mode.ID : string.Empty).ToArray();
             int index = Array.IndexOf(modeNames, defaultMode);
             CurrentPage = Mathf.Max(Mathf.FloorToInt(index / (float)PageCapacity), 0);
-            Melon<Mod>.Logger.Msg($"Set to {defaultMode} on page {CurrentPage}");
+            Plugin.Logger.LogMessage($"Set to {defaultMode} on page {CurrentPage}");
 
             ShowPage();
         }

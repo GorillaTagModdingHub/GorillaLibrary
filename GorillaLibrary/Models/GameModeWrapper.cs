@@ -1,6 +1,5 @@
 ﻿using GorillaGameModes;
 using GorillaLibrary.Utilities;
-using MelonLoader;
 using System;
 
 namespace GorillaLibrary.Models;
@@ -43,7 +42,7 @@ public class GameModeWrapper
         ID = gameModeType.ToString();
         DisplayName = GameModeUtility.GetGameModeName(gameModeType);
 
-        Melon<Mod>.Logger.Msg($"Replicated base gamemode: based on {gameModeType} type");
+        Plugin.Logger.LogInfo($"Replicated base gamemode: based on {gameModeType} type");
     }
 
     public GameModeWrapper(string id, string displayName, GameModeType? game_mode_type = null)
@@ -53,7 +52,7 @@ public class GameModeWrapper
         ID = game_mode_type.HasValue && !id.Contains(game_mode_type.Value.ToString()) ? string.Concat(id, game_mode_type) : id;
         DisplayName = displayName;
 
-        Melon<Mod>.Logger.Msg($"Constructed custom gamemode: {id} based on {(game_mode_type.HasValue ? game_mode_type.Value : "no")} type");
+        Plugin.Logger.LogInfo($"Constructed custom gamemode: {id} based on {(game_mode_type.HasValue ? game_mode_type.Value : "no")} type");
     }
 
     public GameModeWrapper(string id, string displayName, Type gameManager)
@@ -62,6 +61,6 @@ public class GameModeWrapper
         DisplayName = displayName;
         GameManager = gameManager;
 
-        Melon<Mod>.Logger.Msg($"Constructed custom gamemode: {id} with {gameManager.GetType()} manager");
+        Plugin.Logger.LogInfo($"Constructed custom gamemode: {id} with {gameManager.GetType()} manager");
     }
 }

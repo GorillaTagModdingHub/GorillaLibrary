@@ -2,7 +2,6 @@
 
 using GorillaGameModes;
 using HarmonyLib;
-using MelonLoader;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
@@ -53,7 +52,7 @@ internal class GameManagerPatches
     {
         if (NetworkSystem.Instance.IsMasterClient || taggedPlayer == null || taggingPlayer == null || !info.Sender.IsMasterClient) return;
 
-        Melon<Mod>.Logger.Msg("BroadcastTag");
+        Plugin.Logger.LogMessage("BroadcastTag");
         Events.GameMode.OnPlayerTagged.Invoke(___gameModeInstance, taggedPlayer, taggingPlayer);
     }
 
@@ -62,7 +61,7 @@ internal class GameManagerPatches
     {
         if (NetworkSystem.Instance.IsMasterClient || !info.Sender.IsMasterClient) return;
 
-        Melon<Mod>.Logger.Msg("BroadcastRoundComplete");
+        Plugin.Logger.LogMessage("BroadcastRoundComplete");
         Events.GameMode.OnRoundCompleted.Invoke(___gameModeInstance);
     }
 }

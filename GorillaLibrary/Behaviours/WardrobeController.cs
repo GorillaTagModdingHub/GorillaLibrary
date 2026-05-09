@@ -1,6 +1,6 @@
 ﻿using GorillaLibrary.Attributes;
 using GorillaLibrary.Extensions;
-using MelonLoader;
+using GorillaLibrary.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +43,8 @@ public class WardrobeController : MonoBehaviour
 
     internal void Awake()
     {
-        Events.Core.OnGameInitialized.Subscribe(Initialize);
+        if (CoreUtility.Initialized) Initialize();
+        else Events.Core.OnGameInitialized += Initialize;
     }
 
     private async void Initialize()
@@ -57,7 +58,7 @@ public class WardrobeController : MonoBehaviour
 
         if (_outfitText.IsObjectNull() || _nextOutfit.IsObjectNull() || _previousOutfit.IsObjectNull()) return;
 
-        var baseCategories = Melon<Mod>.Instance.wardrobeCategories;
+        var baseCategories = Plugin.Sections;
         _categories = (baseCategories != null && baseCategories.Count > 0) ? [null, .. baseCategories] : [];
 
         OnOutfitTextUpdate();
@@ -185,14 +186,19 @@ public class WardrobeController : MonoBehaviour
             button.UpdateColor();
         }
 
-        WardrobeCategory.UpdateCosmeticsRequest.Subscribe(UpdateCosmetics);
-        WardrobeCategory.SetIconRequest.Subscribe(SetIcons);
+        WardrobeCategory.UpdateCosmeticsRequest += UpdateCosmetics;
+        WardrobeCategory.SetIconRequest += SetIcons;
+    }
+
+    public void OnDestroy()
+    {
+        WardrobeCategory.UpdateCosmeticsRequest -= UpdateCosmetics;
+        WardrobeCategory.SetIconRequest -= SetIcons;
     }
 
     internal void UpdateCosmetics(WardrobeCategory source)
     {
-        Melon<Mod>.Logger.Msg("section");
-        // if (section != source) return;
+        if (_currentCategory != source) return;
         OnCosmeticsUpdated();
     }
 
@@ -253,9 +259,9 @@ public class WardrobeController : MonoBehaviour
 
             UpdateCosmeticDisplays();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            Melon<Mod>.Logger.Error(ex);
+            Plugin.Logger.LogError(ex);
         }
     }
 
@@ -370,7 +376,7 @@ public class WardrobeController : MonoBehaviour
                     _currentAttribute.selectedButton = _currentAttribute.buttons.FirstOrDefault(button => button.enabled) ?? _currentAttribute.buttons[0];
                     UpdateCategoryButtons();
                 }
-                
+
                 _currentCategory = _currentAttribute.categories[_currentAttribute.buttons.IndexOf(_currentAttribute.selectedButton)];
                 UpdateCosmeticDisplays();
 
@@ -393,9 +399,9 @@ public class WardrobeController : MonoBehaviour
                 }
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            Melon<Mod>.Logger.Error(ex);
+            Plugin.Logger.LogError(ex);
         }
 
         OnOutfitTextUpdate();
