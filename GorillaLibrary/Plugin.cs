@@ -38,7 +38,6 @@ internal sealed class Plugin : BaseUnityPlugin
         Logger = base.Logger;
 
         RuntimeHelpers.RunClassConstructor(typeof(Events).TypeHandle);
-        GorillaTagger.OnPlayerSpawned(OnGameInitialized);
 
         MothershipClientApiUnity.OnMessageNotificationSocket += (notif, _) => Events.Server.OnMothershipMessageRecieved.Invoke(notif.Title, notif.Body);
 
