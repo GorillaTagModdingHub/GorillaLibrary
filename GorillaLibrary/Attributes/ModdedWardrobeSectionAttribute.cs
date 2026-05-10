@@ -14,9 +14,12 @@ public class ModdedWardrobeSectionAttribute(string title, params Type[] types) :
 
     internal List<WardrobeCategory> categories;
 
-    internal List<GameObject> objects;
+    internal class PhysicalData
+    {
+        internal List<GameObject> objects;
 
-    internal List<CosmeticCategoryButton> buttons;
+        internal List<CosmeticCategoryButton> buttons;
 
-    internal CosmeticCategoryButton selectedButton;
+        internal CosmeticCategoryButton selectedButton;
+    }
 }
