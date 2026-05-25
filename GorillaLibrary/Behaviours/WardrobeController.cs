@@ -391,6 +391,7 @@ public class WardrobeController : MonoBehaviour
 
                 if (lastAttribute != null)
                 {
+                    lastAttribute.categories.ForEach(section => section.OnPageHide());
                     physicalData[lastAttribute].objects.ForEach(gameObject => gameObject.SetActive(false));
 
                     ReferenceWardrobe = _cosmeticWardrobe;
