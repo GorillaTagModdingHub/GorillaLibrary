@@ -85,18 +85,41 @@ internal sealed class Plugin : BaseUnityPlugin
 
         Sections = [];
 
+        Assembly selfAssembly = typeof(Plugin).Assembly;
+        foreach (var attribute in selfAssembly.GetCustomAttributes())
+        {
+            try
+            {
+                if (attribute is ModdedWardrobeSectionAttribute category)
+                    Sections.Add(category);
+            }
+            catch
+            {
+                Logger.LogError($"Failed to load category from {selfAssembly.FullName}");
+            }
+        }
+
         foreach (var (guid, pluginInfo) in Chainloader.PluginInfos)
         {
             var assembly = pluginInfo?.Instance?.GetType().Assembly;
-            assembly?.GetCustomAttributes().ForEach(attribute =>
-            {
-                if (attribute is ModdedWardrobeSectionAttribute category)
-                {
-                    Sections.Add(category);
-                }
-            });
+            if (assembly == null)
+                continue;
 
-            if (pluginInfo.Instance is not GorillaUnityPlugin gup) continue;
+            foreach (var attribute in assembly.GetCustomAttributes())
+            {
+                try
+                {
+                    if (attribute is ModdedWardrobeSectionAttribute category)
+                        Sections.Add(category);
+                }
+                catch
+                {
+                    Logger.LogError($"Failed to load category from {assembly.FullName}");
+                }
+            }
+
+            if (pluginInfo.Instance is not GorillaUnityPlugin gup)
+                continue;
 
             ConfigEntry<bool> stateEntry = Config.Bind("State", pluginInfo.Metadata.GUID, true);
             gup._stateEntry = stateEntry;
