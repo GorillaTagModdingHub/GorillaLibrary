@@ -85,30 +85,36 @@ internal sealed class Plugin : BaseUnityPlugin
 
         Sections = [];
 
+        Assembly selfAssembly = typeof(Plugin).Assembly;
+        foreach (var attribute in selfAssembly.GetCustomAttributes())
+        {
+            try
+            {
+                if (attribute is ModdedWardrobeSectionAttribute category)
+                    Sections.Add(category);
+            }
+            catch
+            {
+                Logger.LogError($"Failed to load category from {selfAssembly.FullName}");
+            }
+        }
+
         foreach (var (guid, pluginInfo) in Chainloader.PluginInfos)
         {
             var assembly = pluginInfo?.Instance?.GetType().Assembly;
+            if (assembly == null)
+                continue;
 
-            if (assembly != null)
+            foreach (var attribute in assembly.GetCustomAttributes())
             {
                 try
                 {
-                    foreach (var attribute in assembly.GetCustomAttributes())
-                    {
-                        try
-                        {
-                            if (attribute is ModdedWardrobeSectionAttribute category)
-                            {
-                                Sections.Add(category);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                        }
-                    }
+                    if (attribute is ModdedWardrobeSectionAttribute category)
+                        Sections.Add(category);
                 }
-                catch (Exception ex)
+                catch
                 {
+                    Logger.LogError($"Failed to load category from {assembly.FullName}");
                 }
             }
 
