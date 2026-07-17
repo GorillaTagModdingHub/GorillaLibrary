@@ -1,7 +1,7 @@
-﻿using GorillaLibrary.Behaviours;
+﻿using GorillaLibrary.Wardrobe.Behaviours;
 using HarmonyLib;
 
-namespace GorillaLibrary.Patches;
+namespace GorillaLibrary.Wardrobe.Patches;
 
 [HarmonyPatch(typeof(CosmeticWardrobe))]
 internal class CosmeticWardrobePatches

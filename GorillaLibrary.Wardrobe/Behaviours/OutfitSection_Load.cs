@@ -1,11 +1,8 @@
-﻿using GorillaLibrary.Extensions;
-using GorillaNetworking;
-using HarmonyLib;
-using System.Linq;
+﻿using System.Linq;
 using static CosmeticWardrobe;
 using static GorillaNetworking.CosmeticsController;
 
-namespace GorillaLibrary.Behaviours;
+namespace GorillaLibrary.Wardrobe.Behaviours;
 
 internal class OutfitSection_Load : WardrobeCategory
 {
@@ -18,7 +15,7 @@ internal class OutfitSection_Load : WardrobeCategory
 
     public override void ApplyCosmetic(CosmeticWardrobeSelection selection, int index)
     {
-        var outfits = instance.GetField<CosmeticSet[]>("savedOutfits");
+        var outfits = instance.savedOutfits;
         var outfit = index != SelectedOutfit ? outfits[index] : instance.currentWornSet;
 
         selection.displayHead.SetCosmeticActiveArray([.. outfit.items.Select(item => item.displayName)], outfit.ToOnRightSideArray());
@@ -34,21 +31,6 @@ internal class OutfitSection_Load : WardrobeCategory
 
     public override int GetSize()
     {
-        return (int)AccessTools.Field(typeof(CosmeticsController), "maxOutfits").GetValue(null);
-    }
-
-    public override void OnActivated(bool hasActivated)
-    {
-        /*
-        if (hasActivated)
-        {
-            instance.InvokeMethod("ClearOutfits");
-
-            instance.SetField("selectedOutfit", SelectedOutfit == 0 ? 1 : 0);
-            instance.LoadSavedOutfit(0);
-
-            UpdateCosmetics();
-        }
-        */
+        return maxOutfits;
     }
 }

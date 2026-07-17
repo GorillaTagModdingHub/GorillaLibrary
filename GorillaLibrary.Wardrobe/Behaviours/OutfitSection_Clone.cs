@@ -1,12 +1,10 @@
 ﻿using GorillaLibrary.Extensions;
-using GorillaNetworking;
-using HarmonyLib;
 using System.Linq;
 using UnityEngine;
 using static CosmeticWardrobe;
 using static GorillaNetworking.CosmeticsController;
 
-namespace GorillaLibrary.Behaviours;
+namespace GorillaLibrary.Wardrobe.Behaviours;
 
 internal class OutfitSection_Clone : WardrobeCategory
 {
@@ -19,7 +17,7 @@ internal class OutfitSection_Clone : WardrobeCategory
 
     public override void ApplyCosmetic(CosmeticWardrobeSelection selection, int index)
     {
-        var outfits = instance.GetField<CosmeticSet[]>("savedOutfits");
+        var outfits = instance.savedOutfits;
         var outfit = index != SelectedOutfit ? outfits[index] : instance.currentWornSet;
 
         selection.displayHead.SetCosmeticActiveArray([.. outfit.items.Select(item => item.displayName)], outfit.ToOnRightSideArray());
@@ -30,10 +28,10 @@ internal class OutfitSection_Clone : WardrobeCategory
 
     public override void SelectCosmetic(int index)
     {
-        var outfits = instance.GetField<CosmeticSet[]>("savedOutfits");
+        var outfits = instance.savedOutfits;
         outfits[index].CopyItems(instance.currentWornSet);
 
-        var colours = instance.GetField<Vector3[]>("savedColors");
+        var colours = instance.savedColors;
         colours[index] = new Vector3(VRRig.LocalRig.playerColor.r, VRRig.LocalRig.playerColor.g, VRRig.LocalRig.playerColor.b);
 
         instance.SetField("selectedOutfit", SelectedOutfit);
@@ -44,7 +42,7 @@ internal class OutfitSection_Clone : WardrobeCategory
 
     public override int GetSize()
     {
-        return (int)AccessTools.Field(typeof(CosmeticsController), "maxOutfits").GetValue(null);
+        return maxOutfits;
     }
 
     public override void OnActivated(bool hasActivated)

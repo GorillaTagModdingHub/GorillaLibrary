@@ -2,7 +2,7 @@
 using UnityEngine;
 using static CosmeticWardrobe;
 
-namespace GorillaLibrary.Behaviours;
+namespace GorillaLibrary.Wardrobe.Behaviours;
 
 public abstract class WardrobeCategory : MonoBehaviour
 {
@@ -26,9 +26,12 @@ public abstract class WardrobeCategory : MonoBehaviour
 
     public abstract int GetSize();
 
-    public abstract void OnActivated(bool hasActivated);
-
     public abstract void ApplyCosmetic(CosmeticWardrobeSelection selection, int index);
+
+    public virtual void OnActivated(bool hasActivated)
+    {
+
+    }
 
     public virtual void ResetCosmetic(CosmeticWardrobeSelection selection)
     {

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project>
 	<Target Name="CopyToPlugins" AfterTargets="Build" Condition="'$(CI)'!='TRUE'">
-		<Copy SourceFiles="$(TargetPath)" DestinationFiles="$(PluginsPath)\$(ProjectName)\$(TargetFileName)" />
+		<Copy SourceFiles="$(TargetPath)" DestinationFiles="$(PluginsPath)\$(SolutionName)\$(TargetFileName)" />
 		<Message Text="Copied to Plugins" Importance="high"/>
-		<Copy SourceFiles="$(TargetDir)$(TargetName).pdb" Condition="Exists('$(TargetDir)$(TargetName).pdb')" DestinationFiles="$(PluginsPath)\$(ProjectName)\$(ProjectName).pdb" />
+		<Copy SourceFiles="$(TargetDir)$(TargetName).pdb" Condition="Exists('$(TargetDir)$(TargetName).pdb')" DestinationFiles="$(PluginsPath)\$(SolutionName)\$(ProjectName).pdb" />
 		<Message Text="Copied $(ProjectName).pdb to Plugins" Importance="high"/>
 	</Target>
 </Project>

@@ -16,8 +16,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-[assembly: ModdedWardrobeSection("Outfits", typeof(OutfitSection_Load), typeof(OutfitSection_Clone))]
-
 namespace GorillaLibrary;
 
 [BepInPlugin("dev.gorillalibrary", "GorillaLibrary", "1.0.3")]
@@ -27,8 +25,6 @@ internal sealed class Plugin : BaseUnityPlugin
     internal static Plugin Instance;
 
     internal static new ManualLogSource Logger;
-
-    internal static List<ModdedWardrobeSectionAttribute> Sections;
 
     private GameObject sharedObject;
 
@@ -83,19 +79,9 @@ internal sealed class Plugin : BaseUnityPlugin
 
         PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
 
-        Sections = [];
-
         foreach (var (guid, pluginInfo) in Chainloader.PluginInfos)
         {
             var assembly = pluginInfo?.Instance?.GetType().Assembly;
-            assembly?.GetCustomAttributes().ForEach(attribute =>
-            {
-                if (attribute is ModdedWardrobeSectionAttribute category)
-                {
-                    Sections.Add(category);
-                }
-            });
-
             if (pluginInfo.Instance is not GorillaUnityPlugin gup) continue;
 
             ConfigEntry<bool> stateEntry = Config.Bind("State", pluginInfo.Metadata.GUID, true);
@@ -105,14 +91,6 @@ internal sealed class Plugin : BaseUnityPlugin
 
         sharedObject = new GameObject($"{Info.Metadata.Name} {Info.Metadata.Version}", typeof(NetworkController), typeof(GameModeManager), typeof(ConductBoardManager));
         DontDestroyOnLoad(sharedObject);
-
-        Sections.ForEach(category =>
-        {
-            var types = category.SectionTypes?.Where(type => typeof(WardrobeCategory).IsAssignableFrom(type));
-            var list = new List<WardrobeCategory>();
-            types.ForEach(type => list.Add((WardrobeCategory)sharedObject.AddComponent(type)));
-            category.categories = list;
-        });
 
         Events.Core.OnGameInitialized?.Invoke();
     }
@@ -134,6 +112,7 @@ internal sealed class Plugin : BaseUnityPlugin
         }
         catch (Exception ex)
         {
+            Logger.LogFatal("Exception thrown when identifying changed player name");
             Logger.LogError(ex);
         }
     }

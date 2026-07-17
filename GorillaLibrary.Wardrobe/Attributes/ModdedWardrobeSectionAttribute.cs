@@ -1,9 +1,9 @@
-﻿using GorillaLibrary.Behaviours;
+﻿using GorillaLibrary.Wardrobe.Behaviours;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GorillaLibrary.Attributes;
+namespace GorillaLibrary.Wardrobe.Attributes;
 
 [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
 public class ModdedWardrobeSectionAttribute(string title, params Type[] types) : Attribute

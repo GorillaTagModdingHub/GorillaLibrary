@@ -1,6 +1,6 @@
-﻿using GorillaLibrary.Attributes;
-using GorillaLibrary.Extensions;
+﻿using GorillaLibrary.Extensions;
 using GorillaLibrary.Utilities;
+using GorillaLibrary.Wardrobe.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static CosmeticWardrobe;
 
-namespace GorillaLibrary.Behaviours;
+namespace GorillaLibrary.Wardrobe.Behaviours;
 
 public class WardrobeController : MonoBehaviour
 {
@@ -63,7 +63,7 @@ public class WardrobeController : MonoBehaviour
         if (_outfitText.IsObjectNull() || _nextOutfit.IsObjectNull() || _previousOutfit.IsObjectNull()) return;
 
         var baseCategories = Plugin.Sections;
-        _categories = (baseCategories != null && baseCategories.Count > 0) ? [null, .. baseCategories] : [];
+        _categories = baseCategories != null && baseCategories.Count > 0 ? [null, .. baseCategories] : [];
 
         OnOutfitTextUpdate();
 
@@ -223,30 +223,18 @@ public class WardrobeController : MonoBehaviour
 
     internal void OnSelectionNavigateNext()
     {
-        _currentCategory.startingDisplayIndex++;
-        int size = _currentCategory.GetSize();
-        if (_currentCategory.startingDisplayIndex >= size) _currentCategory.startingDisplayIndex = 0;
+        int pageLimit = Mathf.Max(1, Mathf.CeilToInt(_currentCategory.GetSize() / 5f));
+        if (_currentCategory.startingDisplayIndex >= (pageLimit - 1)) _currentCategory.startingDisplayIndex = 0;
+        else _currentCategory.startingDisplayIndex++;
 
         UpdateCosmeticDisplays();
     }
 
     internal void OnSelectionNavigatePrev()
     {
-        _currentCategory.startingDisplayIndex--;
-
-        if (_currentCategory.startingDisplayIndex < 0)
-        {
-            int size = _currentCategory.GetSize();
-            if (size % _selectionArray.Length == 0)
-            {
-                _currentCategory.startingDisplayIndex = size - _selectionArray.Length;
-            }
-            else
-            {
-                _currentCategory.startingDisplayIndex = size / _selectionArray.Length;
-                _currentCategory.startingDisplayIndex *= _selectionArray.Length;
-            }
-        }
+        int pageLimit = Mathf.Max(1, Mathf.CeilToInt(_currentCategory.GetSize() / 5f));
+        if (_currentCategory.startingDisplayIndex <= 0) _currentCategory.startingDisplayIndex = pageLimit - 1;
+        else _currentCategory.startingDisplayIndex--;
 
         UpdateCosmeticDisplays();
     }
@@ -422,7 +410,7 @@ public class WardrobeController : MonoBehaviour
         for (int i = 0; i < _selectionArray.Length; i++)
         {
             CosmeticWardrobeSelection cosmeticWardrobeSelection = _selectionArray[i];
-            _currentCategory.ApplyCosmetic(cosmeticWardrobeSelection, _currentCategory.startingDisplayIndex + i);
+            _currentCategory.ApplyCosmetic(cosmeticWardrobeSelection, (_currentCategory.startingDisplayIndex * 5) + i);
         }
 
         ReferenceWardrobe = null;
