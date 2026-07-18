@@ -247,7 +247,7 @@ public class WardrobeController : MonoBehaviour
             {
                 if (_selectionArray[i].selectButton != button) continue;
 
-                _currentCategory.SelectCosmetic(i);
+                _currentCategory.SelectCosmetic(i + (_currentCategory.startingDisplayIndex * 5));
                 break;
             }
 
