@@ -35,7 +35,10 @@ namespace GorillaLibrary.Patches
                     if (verifiedGameMode == gameModeType)
                     {
                         Plugin.Logger.LogMessage($"JoinTrigger of {___zone.GetName()} allowing generic game mode: {currentGameMode} under {gameModeType}");
-                        __result = currentGameMode;
+
+                        //pico was here, we was assuming we have le custom id but aussming aint enough
+                        __result = gameModeType.ToString();
+
                         return false;
                     }
 
