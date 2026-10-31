@@ -1,9 +1,8 @@
-# Your GitHub workflow file under .github/workflows/
-# Trigger the action on push to main
+name: Publish Documentation
+
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
 
 permissions:
   actions: read
@@ -20,29 +19,32 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: windows-latest
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        ref: main
-    - name: Dotnet Setup
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.x
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
 
-    - name: Setup Gorilla Tag
-      uses: sirkingbinx/setup-gorilla-tag@1.0.0
+      - name: Dotnet Setup
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.x
 
-    - run: dotnet tool install -g docfx
+      - name: Setup Gorilla Tag
+        uses: sirkingbinx/setup-gorilla-tag@1.0.0
 
-    - name: Build DocFX Site
-      run: docfx docfx.json -o _site --logLevel verbose
+      - name: Install DocFX
+        run: dotnet tool install -g docfx
 
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        # Upload entire repository
-        path: '_site'
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+      - name: Build DocFX Site
+        run: docfx docfx.json -o _site --logLevel verbose
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "_site"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

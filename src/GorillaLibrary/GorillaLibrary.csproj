@@ -28,9 +28,6 @@
 		<Reference Include="BepInEx.Harmony">
 			<HintPath>$(BepInExAssemblyPath)\BepInEx.Harmony.dll</HintPath>
 		</Reference>
-		<Reference Include="Fusion.Runtime">
-			<HintPath>$(GameAssemblyPath)\Fusion.Runtime.dll</HintPath>
-		</Reference>
 		<Reference Include="Mono.Security">
 			<HintPath>$(GameAssemblyPath)\Mono.Security.dll</HintPath>
 		</Reference>
