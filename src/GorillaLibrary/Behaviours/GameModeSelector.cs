@@ -124,6 +124,7 @@ namespace GorillaLibrary.Behaviours
                 for (int i = 0; i < customGameModes.Count; i++)
                 {
                     Models.GameModeWrapper gameMode = customGameModes[i];
+                    if (!gameMode.AllowedZones(Zone, sessionIsPrivate)) continue;
                     Plugin.Logger.LogMessage($"+ \"{gameMode.DisplayName}\"");
                     gameModeList.Add(gameMode);
                     continue;

@@ -32,7 +32,7 @@ namespace GorillaLibrary.Patches
                     GameModeType gameModeType = gamemode.BaseGameMode.Value;
 
                     GameModeType verifiedGameMode = (GameModeType)AccessTools.Method(GorillaGameModes.GameMode.GameModeZoneMapping.GetType(), "VerifyModeForZone").Invoke(GorillaGameModes.GameMode.GameModeZoneMapping, [__instance.zone, gameModeType, NetworkSystem.Instance.SessionIsPrivate]);
-                    if (verifiedGameMode == gameModeType)
+                    if (gamemode.AllowedZones(__instance.zone, NetworkSystem.Instance.SessionIsPrivate))
                     {
                         Plugin.Logger.LogMessage($"JoinTrigger of {___zone.GetName()} allowing generic game mode: {currentGameMode} under {gameModeType}");
                         __result = currentGameMode;
