@@ -63,7 +63,7 @@ internal class GameModeManager : MonoBehaviour
 
             GameModeType modeType = gameModeTypes[i];
             if (!DefaultGameModesPerMode.TryAdd(modeType, new GameModeWrapper(modeType))) continue;
-            ModdedGamemodesPerMode.Add(modeType, new GameModeWrapper(Constants.ModdedPrefix, $"Modded {GameModeUtility.GetGameModeName(modeType)}", modeType));
+            ModdedGamemodesPerMode.Add(modeType, new GameModeWrapper(Constants.ModdedPrefix + modeType.ToString(), $"Modded {GameModeUtility.GetGameModeName(modeType)}", modeType));
         }
 
         Plugin.Logger.LogMessage($"Modded Game Modes: {string.Join(", ", ModdedGamemodesPerMode.Select(item => item.Value).Select(mode => mode.DisplayName).Select(displayName => string.Format("\"{0}\"", displayName)))}");

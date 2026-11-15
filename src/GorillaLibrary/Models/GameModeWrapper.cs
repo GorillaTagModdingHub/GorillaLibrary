@@ -1,5 +1,6 @@
 ﻿using GorillaGameModes;
 using GorillaLibrary.Utilities;
+using GorillaNetworking;
 using System;
 
 namespace GorillaLibrary.Models;
@@ -26,6 +27,25 @@ public class GameModeWrapper
     /// </summary>
     public Type GameManager { get; }
 
+    /// <summary>
+    /// Maps the zones on which this game mode is allowed in. If null, it will default to the base game mode's allowed zones.
+    /// </summary>
+    public GTZone[] Zones { get; internal set; }
+
+    /// <summary>
+    /// Maps the zones on which this game mode is not allowed in. If null, it will default to the base game mode's allowed zones.
+    /// </summary>
+    public GTZone[] ExcludedZones { get; internal set; }
+
+    internal bool AllowedZones(GTZone zone, bool isPrivate)
+    {
+        if (GorillaComputer.instance != null && GorillaComputer.instance.IsPlayerInVirtualStump()) zone = GTZone.customMaps;
+        if (Zones != null) { return Array.IndexOf(Zones, zone) >= 0; }
+        if (ExcludedZones != null) { return Array.IndexOf(ExcludedZones, zone) < 0; }
+        if (!BaseGameMode.HasValue) { return true; }
+        return GameMode.GameModeZoneMapping.GetModesForZone(zone, isPrivate).Contains(BaseGameMode.Value);
+    }
+
     public string GameModeName
     {
         get
@@ -49,7 +69,7 @@ public class GameModeWrapper
     {
         BaseGameMode = game_mode_type;
 
-        ID = game_mode_type.HasValue && !id.Contains(game_mode_type.Value.ToString()) ? string.Concat(id, game_mode_type) : id;
+        ID = id;
         DisplayName = displayName;
 
         Plugin.Logger.LogInfo($"Constructed custom gamemode: {id} based on {(game_mode_type.HasValue ? game_mode_type.Value : "no")} type");
